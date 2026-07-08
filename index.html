@@ -173,35 +173,11 @@ nav {
 .hg-chrome svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 14px 26px rgba(20,50,150,0.35)); }
 .hero-inner { position: relative; z-index: 3; }
 
-.hero-content { width: auto; align-self: flex-start; text-align: left; margin-top: 1rem; margin-left: 13rem; position: relative; top: -3rem; }
-/* 아이브로우 전용 슬롯 — 먼저 나타났다 사라지는 문구 */
-.hero-eyebrow-slot {
-  position: relative;
-  top: 11.5rem;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: center;
-}
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 0.6rem;
-  font-size: clamp(2.5rem, 6.5vw, 65px); font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
-  color: #ffffff; white-space: normal; word-break: keep-all; text-align: center;
-  animation: heroEyebrowLifecycle 4.5s ease both;
-  animation-delay: 0.6s;
-}
-@keyframes heroEyebrowLifecycle {
-  0%   { opacity: 0; }
-  20%  { opacity: 1; }
-  82%  { opacity: 1; }
-  90%  { opacity: 0; }
-  100% { opacity: 0; }
-}
+.hero-content { width: auto; align-self: flex-start; text-align: left; margin-top: 1rem; margin-left: 13rem; position: relative; top: 10rem; }
 @keyframes heroSubIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-.hero-eyebrow::before { display: none; }
 .hero-headline {
   font-size: clamp(2.5rem, 6.5vw, 65px); font-weight: 700;
   line-height: 1.35; letter-spacing: 0.01em;
@@ -230,7 +206,7 @@ nav {
 .hero-glow   { animation: heroEnterFade 3.3s ease both; animation-delay: 0.6s; }
 /* 1. 아이브로우: heroEyebrowLifecycle delay 0.7s, 5.6s 동안 등장 후 소멸 */
 /* 2. 헤더 타이틀: 아이브로우가 완전히 사라진 뒤 등장 */
-.hero-content        { animation: heroEnterFade 2.4s ease both; animation-delay: 5.1s; }
+.hero-content        { animation: heroEnterFade 2.4s ease both; animation-delay: 0.6s; }
 /* 4. 로고 이미지 */
 /* 헤더 타이틀 바로 아래 나타나는 작은 서브텍스트 */
 .hero-sub-overlay {
@@ -245,7 +221,7 @@ nav {
   color: #6FD0FF;
   line-height: 1.65;
   animation: heroSubIn 1.7s ease both;
-  animation-delay: 6.0s;
+  animation-delay: 2.0s;
 }
 .hero-sub-overlay .hero-sub-insight {
   font-size: 1em;
@@ -647,8 +623,6 @@ footer {
 @media (max-width: 1599px) {
   .nav-links { margin-right: 11rem !important; }
   .hero-inner { margin-top: 0; }
-  .hero-eyebrow-slot { top: 11.5rem !important; margin-bottom: 0.5rem !important; }
-  .hero-eyebrow { font-size: clamp(2rem, 5vw, 52px) !important; }
   .hero-sub-overlay { font-size: 24px !important; }
   .hero-headline { font-size: clamp(2rem, 5vw, 52px) !important; }
   .hero-content { margin-top: 1rem !important; }
@@ -658,8 +632,6 @@ footer {
 @media (max-width: 1366px) {
   .hero-glass-wrap { transform: scale(0.85); }
   .hero-inner { margin-top: 0; }
-  .hero-eyebrow-slot { margin-top: 0 !important; margin-bottom: 0.5rem !important; top: 11.5rem !important; }
-  .hero-eyebrow { font-size: clamp(1.8rem, 4.5vw, 46px) !important; }
   .hero-sub-overlay { font-size: 22px !important; }
   .hero-headline { font-size: clamp(1.8rem, 4.5vw, 46px) !important; }
   .hero-content { margin-top: 1rem !important; top: 0 !important; }
@@ -696,8 +668,6 @@ footer {
   .hg-hide-md { display: none; }
   .hg-show-sm { display: block !important; }
   .hero-inner { align-items: center; }
-  .hero-eyebrow-slot { margin-top: 0 !important; top: 11.5rem !important; }
-  .hero-eyebrow { font-size: clamp(1.8rem, 4vw, 2.4rem) !important; }
   .hero-sub-overlay { font-size: 19px !important; }
   .hero-content { width: auto !important; align-self: flex-start !important; padding-left: 0; margin-left: 1.5rem; text-align: left; margin-top: 1rem !important; top: 0 !important; }
   .hero-headline { font-size: clamp(1.8rem, 4vw, 2.4rem) !important; text-align: left; }
@@ -745,8 +715,6 @@ footer {
 
   /* 히어로 */
   .hero-inner { flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 0; }
-  .hero-eyebrow-slot { margin-top: 0 !important; margin-bottom: 0.5rem !important; top: 11.5rem !important; }
-  .hero-eyebrow { font-size: clamp(22px, 3.6vw, 30px) !important; letter-spacing: 0.08em !important; }
   .hero-sub-overlay { font-size: 20px !important; letter-spacing: 0.08em !important; }
   .hero-content { width: auto !important; align-self: flex-start !important; padding-left: 0; max-width: 90%; margin-left: 1.25rem; text-align: left; margin-top: 1rem !important; top: 0 !important; }
   .hero-headline { font-size: clamp(14px, 4.5vw, 65px) !important; text-align: left; }
@@ -821,8 +789,6 @@ footer {
   .hg-sp3 { display: block !important; width: 46px !important; height: 46px !important; top: auto !important; bottom: 30% !important; left: 3% !important; transform: none !important; }
   .hg-sp4 { width: 58px !important; height: 58px !important; top: 11% !important; right: 10% !important; transform: none !important; }
   .hero-glass { box-shadow: none !important; }
-  .hero-eyebrow-slot { margin-top: 0 !important; top: 11.5rem !important; }
-  .hero-eyebrow { font-size: clamp(21px, 3.8vw, 26px) !important; white-space: normal !important; }
   .hero-sub-overlay { font-size: clamp(13px, 3.8vw, 17px) !important; white-space: normal !important; }
   .hero-content { top: 0 !important; margin-top: 1rem !important; margin-left: 1rem; }
   .hero-headline { font-size: clamp(22px, 7vw, 65px) !important; text-align: left; }
@@ -990,9 +956,6 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 
 
   <div class="hero-inner" style="padding-top:2.2rem;">
-    <div class="hero-eyebrow-slot">
-      <div class="hero-eyebrow">제약사·CRO 모니터링 팀을 위한<br> 임상연구 모니터링 플랫폼</div>
-    </div>
     <div class="hero-content">
       <h1 class="hero-headline"><span class="hero-line1">임상 모니터링, 사후 집계에서</span><span class="hero-line2">실시간 의사결정으로</span></h1>
       <p class="hero-sub-overlay">데이터가 쌓이는 순간 <span class="hero-sub-insight">Insight</span>가 됩니다.</p>
@@ -1005,7 +968,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   </a>
 
   <!-- 오른쪽 아래 모니터 이미지 -->
-  <img src="icons/icon-monitor-geo.png" alt="" aria-hidden="true" class="hero-monitor-img" style="position:absolute; bottom:3%; right:2%; width:700px; max-width:48vw; height:auto; z-index:2; pointer-events:none; opacity:0; animation: heroEnterFade 1.5s ease both; animation-delay: 7.7s;">
+  <img src="icons/icon-monitor-geo.png" alt="" aria-hidden="true" class="hero-monitor-img" style="position:absolute; bottom:3%; right:2%; width:700px; max-width:48vw; height:auto; z-index:2; pointer-events:none; opacity:0; animation: heroEnterFade 1.5s ease both; animation-delay: 3.2s;">
 </section>
 
 <!-- WHY -->
@@ -1321,14 +1284,14 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 
 <!-- CTA -->
 <section class="cta-section" id="cta" style="flex:1; position:relative; overflow:hidden;">
-  <img src="icons/icon-logo-memo.png" alt="" aria-hidden="true" style="position:absolute; width:700px; height:auto; opacity:0.45; pointer-events:none; bottom:40px; left:50%; transform:translateX(calc(-50% + 1.5rem)) rotate(-12deg); z-index:0; -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%); mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%);">
+  <img src="icons/icon-logo-memo.png" alt="" aria-hidden="true" style="position:absolute; width:500px; height:auto; opacity:0.45; pointer-events:none; bottom:16px; left:50%; transform:translateX(calc(-50% + 1.5rem)) rotate(-12deg); z-index:0; -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%); mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%);">
 
 
   <div class="fade-in" style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; height:100%;">
     <h2 class="s-title" style="margin-top:1rem;"><span style="font-family:'KBLJumpCondensed',sans-serif; font-weight:800; font-style:normal; display:inline-block; transform:translateY(-0.3rem);">Trial Insight</span>가<br class="mobile-br"> 궁금하신가요?</h2>
     <div class="cta-actions" style="margin-top:2.5rem;">
       <div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; padding:2rem 3rem;">
-        <p style="color:rgba(255,255,255,0.95); font-size:1.6rem; font-weight:800; margin:0 0 0.5rem; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:0.5rem 1.5rem; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);">제품 정보 문의하기</p>
+        <p style="color:rgba(255,255,255,0.95); font-size:1.6rem; font-weight:800; margin:0 0 0.5rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:0.5rem 1.5rem;">제품 정보 문의하기</p>
         <div style="display:flex; flex-direction:column; align-items:center; gap:0.2rem;">
           <p style="color:rgba(255,255,255,0.95); font-size:1.25rem; font-weight:500; margin:0;">063-278-9637</p>
           <p style="color:rgba(255,255,255,0.95); font-size:1.25rem; font-weight:500; margin:0;">info@nanumspace.com</p>
