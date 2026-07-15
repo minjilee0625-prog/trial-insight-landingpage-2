@@ -5,6 +5,7 @@
 <title>Trial Insight — 임상연구 모니터링 특화 플랫폼</title>
 <link rel="icon" type="image/png" href="logo/favicon-ti.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if (/Windows NT/i.test(navigator.userAgent)) document.documentElement.classList.add('platform-windows');</script>
 <meta name="description" content="임상연구 모니터링의 복잡함을 자동화로 해결하는 특화 플랫폼, Trial Insight">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://minjilee0625-prog.github.io/trial-insight-landingpage/">
@@ -19,13 +20,17 @@
 <meta name="twitter:image" content="https://trial-insight-landing.netlify.app/og-image.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-@font-face { font-family: 'KBLJump'; src: url('fonts/KBLJump_EB_Extended.ttf') format('truetype'); font-weight: 800; }
-@font-face { font-family: 'KBLJump'; src: url('fonts/KBLJump_B.ttf') format('truetype'); font-weight: 700; }
-@font-face { font-family: 'KBLJump'; src: url('fonts/KBLJump_R.ttf') format('truetype'); font-weight: 400; }
-@font-face { font-family: 'KBLJumpCondensed'; src: url('fonts/KBLJump_EB_Condensed.ttf') format('truetype'); font-weight: 800; }
+@font-face { font-family: 'KBLJump'; src: url('fonts/KBLJump_EB_Extended.ttf') format('truetype'); font-weight: 800; font-display: swap; }
+@font-face { font-family: 'KBLJump'; src: url('fonts/KBLJump_B.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'KBLJump'; src: url('fonts/KBLJump_R.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'KBLJumpCondensed'; src: url('fonts/KBLJump_EB_Condensed.ttf') format('truetype'); font-weight: 800; font-display: swap; }
 </style>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+@media (min-width: 801px) {
+  html.platform-windows { zoom: 0.75; }
+}
 
 html { scrollbar-color: #A8BCC8 transparent; scrollbar-width: thin; }
 ::-webkit-scrollbar { width: 5px; }
@@ -1917,56 +1922,51 @@ window.addEventListener('scroll', function() {
 
   let wheelGestureActive = false;
   let wheelDirection = 0;
-  let lastWheelMagnitude = 0;
-  let lastWheelAt = 0;
   let wheelGestureTimer;
-  const wheelIdleMs = 100;
-  const magicMouseRenewalGapMs = 45;
-  const magicMouseRenewalRatio = 1.6;
+  const wheelIdleMs = 140;
+
+  function getWheelDelta(event) {
+    if (typeof event.deltaY === 'number' && event.deltaY !== 0) {
+      if (event.deltaMode === 1) return event.deltaY * 16;
+      if (event.deltaMode === 2) return event.deltaY * window.innerHeight;
+      return event.deltaY;
+    }
+    if (typeof event.wheelDelta === 'number') return -event.wheelDelta;
+    return event.detail || 0;
+  }
 
   function resetWheelGesture() {
     clearTimeout(wheelGestureTimer);
     wheelGestureTimer = setTimeout(function() {
       wheelGestureActive = false;
       wheelDirection = 0;
-      lastWheelMagnitude = 0;
     }, wheelIdleMs);
   }
 
-  window.addEventListener('wheel', function(e) {
+  window.addEventListener('wheel', function(event) {
     if (!isFeatureInView()) {
       clearTimeout(wheelGestureTimer);
       wheelGestureActive = false;
       wheelDirection = 0;
-      lastWheelMagnitude = 0;
       return;
     }
-    if (!e.deltaY) return;
 
-    const now = performance.now();
-    const direction = Math.sign(e.deltaY);
-    const magnitude = Math.abs(e.deltaY);
+    const delta = getWheelDelta(event);
+    if (!delta) return;
+
+    const direction = Math.sign(delta);
     const canMove = direction > 0 ? currentIndex < blocks.length - 1 : currentIndex > 0;
-    const elapsed = now - lastWheelAt;
-    const hasFreshMagicMouseInput =
-      e.deltaMode === 0 &&
-      elapsed >= magicMouseRenewalGapMs &&
-      magnitude >= Math.max(1, lastWheelMagnitude * magicMouseRenewalRatio);
 
-    if (wheelGestureActive && wheelDirection === direction && !hasFreshMagicMouseInput) {
-      e.preventDefault();
-      lastWheelMagnitude = magnitude;
-      lastWheelAt = now;
+    if (wheelGestureActive && wheelDirection === direction) {
+      event.preventDefault();
       resetWheelGesture();
       return;
     }
 
     if (!canMove) return;
-    e.preventDefault();
+    event.preventDefault();
     wheelGestureActive = true;
     wheelDirection = direction;
-    lastWheelMagnitude = magnitude;
-    lastWheelAt = now;
     resetWheelGesture();
     goTo(currentIndex + direction);
   }, { passive: false });
