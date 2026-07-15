@@ -11,6 +11,30 @@
     document.documentElement.classList.add('js');
   }
 </script>
+<script>
+  /*
+   * Mac 100%와 Windows 75%가 같은 시각 크기인 환경을 보정한다.
+   * window.outerWidth / innerWidth는 OS 화면 배율과 분리해 브라우저 확대율을
+   * 판별하므로, Windows 브라우저가 100%일 때만 페이지를 75% 기준으로 표시한다.
+   */
+  (function() {
+    var root = document.documentElement;
+    var isWindowsChromium = /Windows/i.test(navigator.userAgent) && /(?:Edg|Chrome|Chromium)/i.test(navigator.userAgent);
+
+    function updateWindowsScale() {
+      var browserScale = window.outerWidth && window.innerWidth
+        ? window.outerWidth / window.innerWidth
+        : 1;
+      var isDesktop = window.innerWidth > 800;
+      var isDefaultBrowserZoom = Math.abs(browserScale - 1) < 0.06;
+      root.classList.toggle('windows-default-zoom', isWindowsChromium && isDesktop && isDefaultBrowserZoom);
+    }
+
+    updateWindowsScale();
+    window.addEventListener('resize', updateWindowsScale);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateWindowsScale);
+  })();
+</script>
 <meta name="description" content="임상연구 모니터링의 복잡함을 자동화로 해결하는 특화 플랫폼, Trial Insight">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://minjilee0625-prog.github.io/trial-insight-landingpage/">
@@ -39,12 +63,6 @@ html { scrollbar-color: #A8BCC8 transparent; scrollbar-width: thin; }
 ::-webkit-scrollbar-thumb { background: #A8BCC8; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #8AAABB; }
 
-@supports (height: 100dvh) {
-  .hero { height: 100dvh; }
-  .why-section, .benefits-section, .features-section { min-height: 100dvh; }
-  #faq, .cta-footer-wrap { min-height: 100dvh; }
-}
-
 :root {
   --bg:        #F0F5FB;
   --bg-mid:    #FFFFFF;
@@ -66,8 +84,7 @@ html { scrollbar-color: #A8BCC8 transparent; scrollbar-width: thin; }
 html {
   scroll-behavior: smooth;
   background: #080f1e;
-  /* proximity는 Windows 마우스 휠·고해상도 화면에서도 일반 스크롤을 막지 않는다. */
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
 }
 .hero, .why-section, .features-section, .benefits-section, #faq, .cta-footer-wrap {
   scroll-snap-stop: always;
@@ -79,6 +96,16 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* Windows 100%를 Mac 100% / Windows 75%와 같은 시각 크기로 보정 */
+@media (min-width: 801px) {
+  @supports (zoom: 1) {
+    html.windows-default-zoom body {
+      zoom: 0.75;
+      width: 133.333333%;
+    }
+  }
 }
 
 /* ─── NAV ─────────────────────────────────── */
@@ -1154,28 +1181,28 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
     <img src="logo/ti-logo-typo-white.png" alt="Trial Insight" style="height:42px; width:auto;">
   </a>
   <ul class="nav-links">
-    <li><a href="#why" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});">제품 소개</a></li>
-    <li><a href="#features" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'});">핵심 기능</a></li>
-    <li><a href="#benefits" onclick="event.preventDefault();document.getElementById('benefits').scrollIntoView({behavior:'smooth'});">기대 효과</a></li>
-    <li><a href="#cta" onclick="event.preventDefault();document.getElementById('cta').scrollIntoView({behavior:'smooth'});">FAQ</a></li>
+    <li><a href="#why" onclick="event.preventDefault();window.tiScrollTo('why');">제품 소개</a></li>
+    <li><a href="#features" onclick="event.preventDefault();window.tiScrollTo('features');">핵심 기능</a></li>
+    <li><a href="#benefits" onclick="event.preventDefault();window.tiScrollTo('benefits');">기대 효과</a></li>
+    <li><a href="#cta" onclick="event.preventDefault();window.tiScrollTo('cta');">FAQ</a></li>
   </ul>
   <button class="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('mobile-menu').classList.toggle('open')" aria-label="메뉴">
     <span></span><span></span><span></span>
   </button>
 </nav>
 <nav class="section-nav" aria-label="섹션 이동">
-  <a href="#hero" data-section="hero" aria-label="히어로로 이동" onclick="event.preventDefault();document.getElementById('hero').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#why" data-section="why" aria-label="제품 소개로 이동" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#features" data-section="features" aria-label="핵심 기능으로 이동" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#benefits" data-section="benefits" aria-label="기대 효과로 이동" onclick="event.preventDefault();document.getElementById('benefits').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#faq" data-section="faq" aria-label="FAQ로 이동" onclick="event.preventDefault();document.getElementById('faq').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#cta" data-section="cta" aria-label="CTA로 이동" onclick="event.preventDefault();document.getElementById('cta').scrollIntoView({behavior:'smooth'});"></a>
+  <a href="#hero" data-section="hero" aria-label="히어로로 이동" onclick="event.preventDefault();window.tiScrollTo('hero');"></a>
+  <a href="#why" data-section="why" aria-label="제품 소개로 이동" onclick="event.preventDefault();window.tiScrollTo('why');"></a>
+  <a href="#features" data-section="features" aria-label="핵심 기능으로 이동" onclick="event.preventDefault();window.tiScrollTo('features');"></a>
+  <a href="#benefits" data-section="benefits" aria-label="기대 효과로 이동" onclick="event.preventDefault();window.tiScrollTo('benefits');"></a>
+  <a href="#faq" data-section="faq" aria-label="FAQ로 이동" onclick="event.preventDefault();window.tiScrollTo('faq');"></a>
+  <a href="#cta" data-section="cta" aria-label="CTA로 이동" onclick="event.preventDefault();window.tiScrollTo('cta');"></a>
 </nav>
 <div id="mobile-menu">
-  <a href="#why" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('why').scrollIntoView({behavior:'smooth'});">제품 소개</a>
-  <a href="#features" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('features').scrollIntoView({behavior:'smooth'});">핵심 기능</a>
-  <a href="#benefits" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('benefits').scrollIntoView({behavior:'smooth'});">기대 효과</a>
-  <a href="#cta" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('cta').scrollIntoView({behavior:'smooth'});">FAQ</a>
+  <a href="#why" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('why');">제품 소개</a>
+  <a href="#features" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('features');">핵심 기능</a>
+  <a href="#benefits" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('benefits');">기대 효과</a>
+  <a href="#cta" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('cta');">FAQ</a>
 </div>
 
 <!-- HERO -->
@@ -1241,7 +1268,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   </div>
 
   <!-- 스크롤 유도 화살표 -->
-  <a href="#why" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});" class="hero-arrow" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0rem;text-decoration:none;opacity:0.85;z-index:10;">
+  <a href="#why" onclick="event.preventDefault();window.tiScrollTo('why');" class="hero-arrow" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0rem;text-decoration:none;opacity:0.85;z-index:10;">
     <svg width="78" height="30" viewBox="0 0 52 20" fill="none"><path d="M4 4L26 16L48 4" stroke="#7DC8F0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </section>
@@ -1622,7 +1649,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </div><!-- /CTA + FOOTER WRAPPER -->
 
 <!-- BACK TO TOP -->
-<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="맨 위로">
+<button id="backToTop" onclick="window.tiScrollTop()" title="맨 위로">
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path d="M4 13L10 7L16 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
@@ -1647,6 +1674,52 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </style>
 
 <script>
+(function() {
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var rafId = null;
+
+  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+
+  function animateScroll(targetY) {
+    var html = document.documentElement;
+    var startY = window.pageYOffset;
+    if (Math.abs(targetY - startY) < 2) return;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (reducedMotion.matches) { window.scrollTo(0, targetY); return; }
+    html.style.scrollSnapType = 'none';
+    html.style.scrollBehavior = 'auto';
+    window._tiScrolling = true;
+    var duration = 1400;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var t = Math.min((ts - startTime) / duration, 1);
+      window.scrollTo(0, startY + (targetY - startY) * ease(t));
+      if (t < 1) {
+        rafId = requestAnimationFrame(step);
+      } else {
+        rafId = null;
+        html.style.scrollSnapType = '';
+        html.style.scrollBehavior = '';
+        /* 애니메이션 완료 후 300ms 유예: 잔여 스크롤 입력 차단 */
+        setTimeout(function() { window._tiScrolling = false; }, 300);
+      }
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  window.tiScrollTo = function(target) {
+    var section = typeof target === 'string' ? document.getElementById(target) : target;
+    if (!section) return;
+    var targetY = Math.round(section.getBoundingClientRect().top + window.pageYOffset);
+    animateScroll(targetY);
+  };
+
+  window.tiScrollTop = function() {
+    animateScroll(0);
+  };
+})();
+
 window.addEventListener('scroll', function() {
   document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
 });
@@ -1930,70 +2003,120 @@ window.addEventListener('scroll', function() {
     sectionObs.observe(featuresSection);
   }
 
-  function isFeatureInView() {
-    const centerElement = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
-    if (centerElement && featuresSection.contains(centerElement)) return true;
+  var wBusy = false;
+  var wheelRemainder = 0;
+  var wheelResetTimer = null;
+  var desktopCarousel = window.matchMedia('(min-width: 1001px)');
+  var reducedMotionFeat = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    const rect = featuresSection.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    return rect.top < viewportHeight * 0.85 && rect.bottom > viewportHeight * 0.15;
+  function normalizedWheelDelta(event) {
+    var delta = event.deltaY;
+    if (event.deltaMode === 1) delta *= 40;
+    else if (event.deltaMode === 2) delta *= window.innerHeight;
+    return delta;
   }
 
-  let wheelGestureActive = false;
-  let wheelDirection = 0;
-  let wheelGestureTimer;
-  const wheelIdleMs = 140;
+  function moveToSection(section) {
+    window.tiScrollTo(section);
+  }
 
-  function getWheelDelta(event) {
-    if (typeof event.deltaY === 'number' && event.deltaY !== 0) {
-      if (event.deltaMode === 1) return event.deltaY * 16;
-      if (event.deltaMode === 2) return event.deltaY * window.innerHeight;
-      return event.deltaY;
+  document.addEventListener('wheel', function(e) {
+    var rect = featuresSection.getBoundingClientRect();
+    if (!desktopCarousel.matches || reducedMotionFeat.matches) return;
+    if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+    if (Math.abs(rect.top) > Math.max(150, window.innerHeight * 0.25)) return;
+    /* busy 또는 섹션 이동 중이면 차단만 하고 wheelRemainder는 쌓지 않음
+       (다음 해제 시 곧바로 다시 슬라이드/섹션으로 튀는 버그 방지) */
+    if (wBusy || window._tiScrolling) { e.preventDefault(); return; }
+
+    var dy = normalizedWheelDelta(e);
+    if (!dy) return;
+    e.preventDefault();
+
+    wheelRemainder += dy;
+    clearTimeout(wheelResetTimer);
+    wheelResetTimer = setTimeout(function() { wheelRemainder = 0; }, 150);
+    if (Math.abs(wheelRemainder) < 50) return;
+
+    dy = wheelRemainder;
+    wheelRemainder = 0;
+    wBusy = true;
+    if (dy > 0) {
+      if (currentIndex < blocks.length - 1) {
+        goTo(currentIndex + 1);
+        setTimeout(function() { wBusy = false; }, 700);
+      } else {
+        var next = featuresSection.nextElementSibling;
+        if (next) moveToSection(next);
+        /* 섹션 이동은 1400ms 애니메이션 + 여유 */
+        setTimeout(function() { wBusy = false; }, 1700);
+      }
+    } else {
+      if (currentIndex > 0) {
+        goTo(currentIndex - 1);
+        setTimeout(function() { wBusy = false; }, 700);
+      } else {
+        var prev = featuresSection.previousElementSibling;
+        if (prev) moveToSection(prev);
+        setTimeout(function() { wBusy = false; }, 1700);
+      }
     }
-    if (typeof event.wheelDelta === 'number') return -event.wheelDelta;
-    return event.detail || 0;
+  }, { passive: false });
+})();
+
+/* ── 전체 섹션 휠 핸들러 (Mac 트랙패드 + Windows 마우스 휠 크로스 플랫폼) ── */
+(function() {
+  var SECS = ['hero', 'why', 'features', 'benefits', 'faq']
+    .map(function(id) { return document.getElementById(id); })
+    .filter(Boolean);
+  var footerWrap = document.querySelector('.cta-footer-wrap');
+  if (footerWrap) SECS.push(footerWrap);
+  var featuresEl = document.getElementById('features');
+  if (!SECS.length) return;
+
+  var busy = false;
+  var acc = 0;
+  var accTimer = null;
+
+  function norm(e) {
+    var d = e.deltaY;
+    if (e.deltaMode === 1) d *= 40;
+    else if (e.deltaMode === 2) d *= window.innerHeight;
+    return d;
   }
 
-  function resetWheelGesture() {
-    clearTimeout(wheelGestureTimer);
-    wheelGestureTimer = setTimeout(function() {
-      wheelGestureActive = false;
-      wheelDirection = 0;
-    }, wheelIdleMs);
+  function curIdx() {
+    var best = 0, bestD = Infinity;
+    SECS.forEach(function(s, i) {
+      var d = Math.abs(s.getBoundingClientRect().top);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
   }
 
-  function handleFeatureWheel(event) {
-    if (!isFeatureInView()) {
-      clearTimeout(wheelGestureTimer);
-      wheelGestureActive = false;
-      wheelDirection = 0;
-      return;
-    }
-
-    const delta = getWheelDelta(event);
-    if (!delta) return;
-
-    const direction = Math.sign(delta);
-    const canMove = direction > 0 ? currentIndex < blocks.length - 1 : currentIndex > 0;
-
-    if (wheelGestureActive && wheelDirection === direction) {
-      event.preventDefault();
-      resetWheelGesture();
-      return;
-    }
-
-    if (!canMove) return;
-    event.preventDefault();
-    wheelGestureActive = true;
-    wheelDirection = direction;
-    resetWheelGesture();
-    goTo(currentIndex + direction);
-  }
-
-  // wheel은 최신 Chrome/Edge/Firefox, mousewheel·DOMMouseScroll은 구형 Windows 브라우저까지 지원한다.
-  window.addEventListener('wheel', handleFeatureWheel, { passive: false });
-  window.addEventListener('mousewheel', handleFeatureWheel, { passive: false });
-  window.addEventListener('DOMMouseScroll', handleFeatureWheel, { passive: false });
+  document.addEventListener('wheel', function(e) {
+    /* 피처 캐러셀이 뷰에 있으면 캐러셀 내부 핸들러가 처리 */
+    if (featuresEl && Math.abs(featuresEl.getBoundingClientRect().top) <= Math.max(150, window.innerHeight * 0.25)) return;
+    if (e.ctrlKey || e.metaKey) return;
+    var d = norm(e);
+    if (!d) return;
+    /* 애니메이션 진행 중이거나 busy이면 차단만 하고 acc는 쌓지 않음
+       (다음 해제 시 다시 섹션으로 튀는 버그 방지) */
+    if (busy || window._tiScrolling) { e.preventDefault(); return; }
+    acc += d;
+    clearTimeout(accTimer);
+    accTimer = setTimeout(function() { acc = 0; }, 150);
+    if (Math.abs(acc) < 50) return;
+    e.preventDefault();
+    var dir = acc > 0 ? 1 : -1;
+    acc = 0;
+    busy = true;
+    var ci = curIdx();
+    var ni = Math.max(0, Math.min(SECS.length - 1, ci + dir));
+    if (ni !== ci) { window.tiScrollTo(SECS[ni]); }
+    /* 애니메이션(1400ms) + 여유 300ms */
+    setTimeout(function() { busy = false; }, 1700);
+  }, { passive: false });
 })();
 
 /* ── 3D Gear Icon ── */
