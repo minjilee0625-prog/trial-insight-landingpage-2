@@ -5,7 +5,6 @@
 <title>Trial Insight — 임상연구 모니터링 특화 플랫폼</title>
 <link rel="icon" type="image/png" href="logo/favicon-ti.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>if (/Windows NT/i.test(navigator.userAgent)) document.documentElement.classList.add('platform-windows');</script>
 <meta name="description" content="임상연구 모니터링의 복잡함을 자동화로 해결하는 특화 플랫폼, Trial Insight">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://minjilee0625-prog.github.io/trial-insight-landingpage/">
@@ -28,23 +27,17 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-@media (min-width: 801px) {
-  html.platform-windows body { zoom: 0.75; }
-  html.platform-windows .hero,
-  html.platform-windows .why-section,
-  html.platform-windows .features-section,
-  html.platform-windows .benefits-section,
-  html.platform-windows #faq,
-  html.platform-windows .cta-footer-wrap {
-    min-height: 133.333333vh !important;
-  }
-}
-
 html { scrollbar-color: #A8BCC8 transparent; scrollbar-width: thin; }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #A8BCC8; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #8AAABB; }
+
+@supports (height: 100dvh) {
+  .hero { height: 100dvh; }
+  .why-section, .benefits-section, .features-section { min-height: 100dvh; }
+  #faq, .cta-footer-wrap { min-height: 100dvh; }
+}
 
 :root {
   --bg:        #F0F5FB;
@@ -1809,6 +1802,7 @@ window.addEventListener('scroll', function() {
 <script>
 (function() {
   var els = Array.prototype.slice.call(document.querySelectorAll('.fade-in'));
+
   if (!('IntersectionObserver' in window)) {
     els.forEach(function(el) { el.classList.add('vis'); });
     return;
@@ -1926,6 +1920,9 @@ window.addEventListener('scroll', function() {
   }
 
   function isFeatureInView() {
+    const centerElement = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+    if (centerElement && featuresSection.contains(centerElement)) return true;
+
     const rect = featuresSection.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     return rect.top < viewportHeight * 0.85 && rect.bottom > viewportHeight * 0.15;
