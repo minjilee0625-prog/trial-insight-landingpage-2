@@ -4,7 +4,13 @@
 <meta charset="UTF-8">
 <title>Trial Insight — 임상연구 모니터링 특화 플랫폼</title>
 <link rel="icon" type="image/png" href="logo/favicon-ti.png">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+  /* 콘텐츠는 기본적으로 보이게 두고, 지원 환경에서만 진입 모션을 켠다. */
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('js');
+  }
+</script>
 <meta name="description" content="임상연구 모니터링의 복잡함을 자동화로 해결하는 특화 플랫폼, Trial Insight">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://minjilee0625-prog.github.io/trial-insight-landingpage/">
@@ -33,12 +39,6 @@ html { scrollbar-color: #A8BCC8 transparent; scrollbar-width: thin; }
 ::-webkit-scrollbar-thumb { background: #A8BCC8; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #8AAABB; }
 
-@supports (height: 100dvh) {
-  .hero { height: 100dvh; }
-  .why-section, .benefits-section, .features-section { min-height: 100dvh; }
-  #faq, .cta-footer-wrap { min-height: 100dvh; }
-}
-
 :root {
   --bg:        #F0F5FB;
   --bg-mid:    #FFFFFF;
@@ -57,7 +57,12 @@ html { scrollbar-color: #A8BCC8 transparent; scrollbar-width: thin; }
   --font: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
 }
 
-html { scroll-behavior: smooth; background: #080f1e; scroll-snap-type: y mandatory; }
+html {
+  scroll-behavior: smooth;
+  background: #080f1e;
+  /* Windows의 휠 입력을 막지 않도록 부드러운 스냅만 사용한다. */
+  scroll-snap-type: y proximity;
+}
 .hero, .why-section, .features-section, .benefits-section, #faq, .cta-footer-wrap {
   scroll-snap-stop: always;
 }
@@ -79,12 +84,6 @@ nav {
   border-bottom: none;
   transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
 }
-nav.nav-scrolled {
-  background: rgba(255,255,255,0.3);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  box-shadow: 0 1px 0 rgba(20,50,100,0.06);
-}
 .nav-brand {
   display: flex; align-items: center; gap: 0.65rem;
   text-decoration: none; margin-top: 0;
@@ -100,22 +99,61 @@ nav.nav-scrolled {
 .nav-wordmark b { color: #4BA3DE; font-weight: 800; }
 .nav-links { display: flex; align-items: center; gap: 1.75rem; list-style: none; margin-right: 24rem; margin-top: 0; }
 .nav-links a { color: #7299B8; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s, background 0.2s, border-color 0.2s; padding: 0.5rem 1.1rem; border-radius: 6px; border: 1px solid transparent; }
-nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.85); }
 .nav-links a:hover { color: #F4F8FC; background: rgba(255,255,255,0.18); }
 .nav-links a:active { background: rgba(255,255,255,0.26); }
-nav.nav-light-theme .nav-links a { color: #4A6580; }
-nav.nav-light-theme .nav-links a:hover { color: #123a7a; background: rgba(31,104,176,0.08); }
-nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 .nav-cta {
   background: var(--cerulean); color: #fff !important;
   padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 600 !important;
   transition: background 0.2s !important;
 }
 .nav-cta:hover { background: var(--sky-dark) !important; }
+nav.nav-scrolled {
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: 0 1px 0 rgba(20,50,100,0.06);
+}
+nav.nav-light-theme {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: 0 1px 0 rgba(31,104,176,0.08), 0 4px 24px rgba(8,15,30,0.08);
+}
+.nav-light-theme .nav-links a { color: #4A6580; }
+.nav-light-theme .nav-links a:hover { color: #123a7a; background: rgba(31,104,176,0.08); }
+nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
+nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.85); }
+
+/* ─── SECTION NAV ─────────────────────────────────── */
+.section-nav {
+  position: fixed; left: auto; right: 5.75rem; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+  width: auto; padding: 0; margin: 0; background: none; border: none; z-index: 90;
+}
+.section-nav a {
+  position: relative;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(114,153,184,0.4);
+  display: block;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.section-nav a::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 32px; height: 32px; transform: translate(-50%, -50%);
+}
+.section-nav a:hover { background: rgba(114,153,184,0.75); }
+.section-nav a.active { background: #4BA3DE; transform: scale(1.4); }
+.section-nav.section-nav-light a { background: rgba(31,104,176,0.3); }
+.section-nav.section-nav-light a:hover { background: rgba(31,104,176,0.55); }
+.section-nav.section-nav-light a.active { background: #1F68B0; }
+.section-nav.section-nav-blue a { background: rgba(255,255,255,0.4); }
+.section-nav.section-nav-blue a:hover { background: rgba(255,255,255,0.7); }
+.section-nav.section-nav-blue a.active { background: #ffffff; }
+@media (max-width: 1000px) { .section-nav { display: none; } }
 
 /* ─── HERO ─────────────────────────────────── */
 .hero {
-  position: relative; height: 100vh;
+  position: relative; height: 100vh; height: 100dvh;
   display: flex; align-items: center;
   overflow: hidden;
   background: linear-gradient(to bottom, #080f1e 0%, #112147 30%, #2d5f8a 100%);
@@ -197,7 +235,7 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 0.6rem;
-  font-size: clamp(19px, calc(8px + 1.375vw), 30px); font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
+  font-size: 30px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
   color: #4BA3DE; white-space: normal; word-break: keep-all; text-align: center;
 }
 @keyframes heroEyebrowLifecycle {
@@ -213,12 +251,12 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 }
 .hero-eyebrow::before { display: none; }
 .hero-headline {
-  font-size: clamp(2rem, 4.125vw, 65px); font-weight: 700;
+  font-size: clamp(2.5rem, 6.5vw, 65px); font-weight: 700;
   line-height: 1.2; letter-spacing: 0.01em;
   color: #F4F8FC; margin-bottom: 0.75rem;
   text-align: center; width: 100%;
 }
-.hero-headline em { font-style: normal; color: #4BA3DE; font-weight: 800; font-family: 'KBLJumpCondensed', sans-serif; font-size: 0.97em; display: inline-block; transform: skewX(-10deg); position: relative; left: -0.4rem; }
+.hero-headline em { font-style: normal; color: #4BA3DE; font-weight: 800; font-family: 'KBLJumpCondensed', sans-serif; font-size: 0.97em; display: inline-block; position: relative; left: -0.4rem; }
 .hero-line1 { display: block; white-space: nowrap; margin-bottom: 0.25em; }
 .hero-line2 { display: block; white-space: nowrap; }
 .hero-sub-insight {
@@ -245,7 +283,7 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
   text-align: center;
   white-space: nowrap;
   margin: 0;
-  font-size: clamp(19px, calc(8px + 1.375vw), 30px);
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: 0.13em;
   color: #4BA3DE;
@@ -320,8 +358,6 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 /* ─── SECTION BASE ─────────────────────────────────── */
 .section { padding: clamp(6rem, 10vw, 9rem) clamp(1.5rem, 5vw, 4rem); }
 .mobile-br { display: none; }
-.feat1-br-mobile { display: none; }
-.feat2-br-mobile { display: none; }
 .s-eyebrow {
   display: inline-block;
   font-size: 1.3rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
@@ -335,11 +371,6 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
   letter-spacing: 0.05em; line-height: 1.2; text-wrap: balance;
   color: #1B3A6B; margin-bottom: 1.7rem;
 }
-/* 피처 섹션 헤더(KEY FEATURES/핵심 기능)는 이전 크기 유지 — 이번 축소 대상에서 제외 (데스크탑만, 모바일은 섹션2와 동일하게 축소) */
-@media (min-width: 801px) {
-  #features .s-eyebrow { font-size: 1.5rem !important; }
-  #features .s-title { font-size: 42px !important; }
-}
 .s-desc {
   font-size: 25px; font-weight: 700; color: var(--text-muted);
   max-width: 52ch; line-height: 1.5; text-wrap: balance;
@@ -349,9 +380,9 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 .why-section {
   background: radial-gradient(ellipse 100% 15% at 50% 0%, rgba(0,185,255,0.12) 0%, transparent 100%), linear-gradient(145deg, #EBF4FF 0%, #F6FAFF 55%, #FAFCFF 100%);
   text-align: center; position: relative; overflow: hidden;
-  box-sizing: border-box;
-  min-height: 100vh; padding-top: 80px; display: flex; flex-direction: column; justify-content: center;
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
   scroll-snap-align: start;
+  padding-top: 80px; box-sizing: border-box;
 }
 .why-section::before, .why-section::after { display: none; }
 .why-intro { max-width: 780px; margin: 0 auto 3.5rem; position: relative; z-index: 1; }
@@ -402,7 +433,7 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 .benefits-section {
   background: #FFFFFF;
   text-align: left; position: relative; overflow: hidden;
-  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
   scroll-snap-align: start;
 }
 .benefits-section::before, .benefits-section::after { display: none; }
@@ -442,8 +473,7 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 .features-section {
   background: linear-gradient(165deg, #E9EFF8 0%, #F2F7FC 55%, #F9FAFB 100%);
   position: relative;
-  overflow: hidden;
-  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
   box-sizing: border-box;
   scroll-snap-align: start;
 }
@@ -473,14 +503,14 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
   width: 100%;
 }
 .feature-block:last-child { border-bottom: none; }
-/* 섹션3 상단 공통 타이틀 제거 — 각 피처 카피 위 순번 라벨로 대체 */
-.features-header { display: none !important; }
-/* ─── FEATURE 가로 캐러셀 (모바일 포함 전체 폭) ───── */
-.features-grid-2col { position: relative; overflow: hidden; min-height: 72vh; display: block; }
-.feature-block {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  border-bottom: none !important;
-  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+/* ─── FEATURE 가로 캐러셀 (데스크탑 전용, 모바일은 기존 세로 스택 유지) ───── */
+@media (min-width: 1001px) {
+  .features-grid-2col { position: relative; overflow: hidden; min-height: 72vh; display: block; }
+  .feature-block {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    border-bottom: none !important;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
 }
 .features-scroll-hint {
   position: fixed; left: 50%; bottom: 1.75rem; transform: translateX(-50%);
@@ -501,7 +531,7 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
 }
 .feature-pager.is-visible { opacity: 1; pointer-events: auto; }
 .feat-pager-arrow {
-  position: absolute; top: calc(50% - 1rem); transform: translateY(-50%);
+  position: fixed; top: 50%; transform: translateY(-50%);
   background: none; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   color: rgba(31,104,176,0.55);
@@ -510,55 +540,52 @@ nav.nav-light-theme .nav-links a:active { background: rgba(31,104,176,0.14); }
   transition: color 0.2s, opacity 0.2s;
 }
 .feat-pager-arrow svg { display: block; }
-.feat-pager-prev { left: 7.5rem; }
-.feat-pager-next { right: 7.5rem; }
+.feat-pager-prev { left: 1.5rem; }
+.feat-pager-next { right: 1.5rem; }
 .feat-pager-arrow:hover { color: #123a7a; }
 .feat-pager-arrow:disabled { opacity: 0.3; cursor: default; color: #1F68B0; }
 .feat-pager-count {
-  position: absolute; left: 50%; bottom: 10rem; transform: translateX(-50%);
+  position: fixed; left: 50%; bottom: 4rem; transform: translateX(-50%);
   font-size: 1.05rem; font-weight: 600; letter-spacing: 0.04em; color: #4A6580;
   font-variant-numeric: tabular-nums;
   z-index: 50;
 }
 .feat-pager-current { color: #1F68B0; font-weight: 800; }
 @media (max-width: 1000px) {
-  .features-grid-2col { top: 1.5rem !important; }
-  .feat-pager-arrow { padding: 0.3rem 0.35rem; top: calc(50% + 1rem); }
-  .feat-pager-arrow svg { width: 14px; height: 26px; }
-  .feat-pager-prev { left: 0.5rem; }
-  .feat-pager-next { right: 0.5rem; }
-  .feat-pager-count { bottom: 3rem; font-size: 0.9rem; }
+  .feature-pager, .feat-pager-arrow, .feat-pager-count { display: none; }
 }
-.feat-copy { flex: 0 1 auto; max-width: 560px; min-width: 0; padding: 0 0 1rem; margin-left: 3rem; }
+.feat-copy { flex: 0 1 auto; max-width: 560px; min-width: 0; padding: 0 0 1rem; margin-left: 0.5rem; }
 .feat-right { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
-.feat-index {
-  display: block; font-size: 0.8rem; font-weight: 700;
-  letter-spacing: 0.08em; color: var(--text-muted);
-  opacity: 0.6; margin-bottom: 0.6rem;
-}
 .feat-tag {
-  display: inline-block; font-size: 17px; font-weight: 700;
+  display: inline-block; font-size: 20px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--cerulean); background: none;
   padding: 0; border-radius: 0; margin-bottom: 0.35rem;
 }
 .feat-title {
-  font-size: 30px; font-weight: 800;
+  font-size: 36px; font-weight: 800;
   color: var(--text); letter-spacing: 0.05em;
   margin-bottom: 1.7rem; line-height: 1.2; text-wrap: balance;
 }
-.feat-desc { font-size: 19px; font-weight: 500; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.375rem; margin-top: 1.7rem; }
+.feat-desc { font-size: 23px; font-weight: 500; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.375rem; margin-top: 1.7rem; }
 .feat-note {
   font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;
   padding: 0.5rem 0; margin-bottom: 1.5rem;
   font-weight: 400;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.fcc-slide .chips {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+}
 .chip {
   font-size: 0.875rem; padding: 0.3rem 0.9rem; border-radius: 20px;
   background: #D0E6F5;
   color: var(--sky-dark); font-weight: 600;
-  line-height: 1.3; display: inline-block;
 }
 
 /* ─── VISUAL MOCKUPS ─────────────────────────────────── */
@@ -725,7 +752,8 @@ footer {
   0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.85; }
   50% { transform: translateX(-50%) translateY(8px); opacity: 0.55; }
 }
-.fade-in { opacity: 0; transform: translateY(18px); transition: opacity 1.2s ease, transform 1.2s ease; }
+.fade-in { opacity: 1; transform: none; transition: opacity 1.2s ease, transform 1.2s ease; }
+.js .fade-in { opacity: 0; transform: translateY(18px); }
 .fade-in.vis { opacity: 1; transform: none; }
 .why-section .fade-in { transition-duration: 1.5s; }
 #faq .fade-in { transition-duration: 0.35s; }
@@ -752,15 +780,18 @@ footer {
 @media (max-width: 1366px) {
   .hero-glass-wrap { transform: scale(0.85); }
   .hero-inner { margin-top: 0; }
-  .nav-links { margin-right: 11rem !important; }
-  .hero-content { margin-top: 0 !important; }
+  .hero-eyebrow-slot { margin-top: 2.5rem !important; margin-bottom: -1.5rem !important; top: 4rem !important; }
+  .hero-eyebrow { font-size: 22px !important; }
+  .hero-sub-overlay { font-size: 22px !important; }
+  .hero-headline { font-size: clamp(1.8rem, 4.5vw, 46px) !important; }
+  .hero-content { margin-top: 0 !important; top: 8.5rem !important; }
   .hero-logo-right { margin-top: 1.3rem !important; }
   .hero-logo-right img { width: 540px !important; }
   .hero-arrow { bottom: 1.5rem !important; }
 
   /* 섹션 3 — 태블릿 포함 1열 세로 배치 */
   .features-grid-2col { display: flex !important; flex-direction: column !important; padding: 0 2rem !important; gap: 0 !important; }
-  .feature-block { display: flex !important; flex-direction: column !important; min-height: auto !important; gap: 1.5rem !important; padding: 3rem 0 !important; border-bottom: none !important; width: 100% !important; box-sizing: border-box !important; }
+  .feature-block { display: flex !important; flex-direction: column !important; min-height: auto !important; gap: 1.5rem !important; padding: 3rem 0 !important; border-bottom: 1px solid rgba(30,100,170,0.1) !important; width: 100% !important; box-sizing: border-box !important; }
   .feature-block:last-child { border-bottom: none !important; }
   .feat-visual { width: 100% !important; max-width: 480px !important; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box !important; }
   .feat-icon-pair { flex-direction: row !important; align-items: center !important; justify-content: center !important; }
@@ -788,8 +819,11 @@ footer {
   .hg-hide-md { display: none; }
   .hg-show-sm { display: block !important; }
   .hero-inner { align-items: center; }
-  .hero-content { padding-left: 0; text-align: center; margin-top: 0 !important; }
-  .hero-headline { text-align: center; }
+  .hero-eyebrow-slot { margin-top: 4rem !important; top: 3rem !important; }
+  .hero-eyebrow { font-size: 19px !important; }
+  .hero-sub-overlay { font-size: 19px !important; }
+  .hero-content { padding-left: 0; text-align: center; margin-top: 0 !important; top: 7.5rem !important; }
+  .hero-headline { font-size: clamp(1.8rem, 4vw, 2.4rem) !important; text-align: center; }
   .hero-logo-right { margin-top: 1.3rem !important; }
   .hero-logo-right img { width: 540px !important; }
   .s-title { font-size: clamp(1.8rem, 4vw, 2.6rem) !important; }
@@ -802,7 +836,7 @@ footer {
 
   /* 피처 섹션 */
   .features-grid-2col { display: flex !important; flex-direction: column !important; padding: 0 1.5rem !important; gap: 0 !important; }
-  .feature-block { display: flex !important; flex-direction: column !important; min-height: auto !important; gap: 1rem !important; padding: 2.5rem 0 !important; border-bottom: none !important; width: 100% !important; box-sizing: border-box !important; }
+  .feature-block { display: flex !important; flex-direction: column !important; min-height: auto !important; gap: 1rem !important; padding: 2.5rem 0 !important; border-bottom: 1px solid rgba(30,100,170,0.1) !important; width: 100% !important; box-sizing: border-box !important; }
   .feature-block:last-child { border-bottom: none !important; }
   .feat-visual { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
   /* Feature1: 이미지 2개 가로 나란히 */
@@ -845,16 +879,16 @@ footer {
 
   /* 섹션 타이틀 */
   .s-title { font-size: clamp(1.4rem, 5vw, 2rem) !important; }
-  .feat-tag { font-size: 12px !important; }
+  .feat-tag { font-size: 14px !important; }
   .s-eyebrow { font-size: 14px !important; }
-  .feat-title { font-size: clamp(1.1rem, 4vw, 1.4rem) !important; white-space: normal !important; }
-  .feat-desc { font-size: 0.85rem !important; margin-top: -0.5rem !important; }
+  .feat-title { font-size: clamp(1.3rem, 4.5vw, 1.7rem) !important; white-space: normal !important; }
+  .feat-desc { font-size: 0.95rem !important; margin-top: -0.5rem !important; }
   .feat-note { font-size: 0.75rem !important; text-align: center !important; width: 100% !important; }
   .s-desc { font-size: 0.95rem !important; }
 
   /* 피처 섹션 */
   .features-grid-2col { display: flex !important; flex-direction: column !important; padding: 0 1rem !important; gap: 0 !important; }
-  .feature-block { display: flex !important; flex-direction: column !important; min-height: auto !important; gap: 1rem !important; padding: 2rem 0 !important; border-bottom: none !important; width: 100% !important; box-sizing: border-box !important; }
+  .feature-block { display: flex !important; flex-direction: column !important; min-height: auto !important; gap: 1rem !important; padding: 2rem 0 !important; border-bottom: 1px solid rgba(30,100,170,0.1) !important; width: 100% !important; box-sizing: border-box !important; }
   .feature-block:last-child { border-bottom: none !important; }
   .feat-visual { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
   .feat-visual[style*="display:flex"] { flex-direction: column !important; align-items: center !important; gap: 0.5rem !important; }
@@ -893,22 +927,9 @@ footer {
   .chat-d-br { display: none !important; }
   .chat-m-br { display: inline !important; }
 
-  /* AI 어시스턴트·뉴스레터·표 크기 통일 (동일 스케일, 글씨 비율 왜곡 없음) */
-  .feat-visual-ai { margin-top: 0 !important; transform: scale(0.62); transform-origin: top center; margin-bottom: -8.94rem !important; }
-  .feat-visual-newsletter { margin-top: -1rem !important; transform: scale(0.62); transform-origin: top center; margin-bottom: -9.19rem !important; }
-  #feature3 .feat-sub { margin-top: 0.24rem !important; }
-  #feature3 .feat-note { top: 0 !important; }
-  #feature2 .feat-visual { width: 340px !important; transform: scale(0.7); transform-origin: top center; margin-top: 0 !important; margin-bottom: -5.1rem !important; }
-
-  /* 표·AI채팅 세로 크기 축소 (내부 여백 압축) */
-  .mock-body { padding: 0.85rem 1.1rem !important; }
-  .q-item { padding: 0.32rem 0 !important; }
-  .q-legend { margin-top: 0.5rem !important; padding-top: 0.4rem !important; }
-  .chat-wrap { gap: 0.4rem !important; }
-  .chat-a { padding: 0.55rem 0.8rem !important; }
-  .chat-a-head { margin-bottom: 0.35rem !important; }
-  .chat-note { margin-top: 0.35rem !important; }
-  .ct th, .ct td { padding-top: 0.18rem !important; padding-bottom: 0.18rem !important; }
+  /* AI 어시스턴트·뉴스레터 표 위로 올리기 + 세로폭 축소 */
+  .feat-visual-ai { margin-top: -1rem !important; transform: scale(0.8); transform-origin: top center; margin-bottom: -4rem !important; }
+  .feat-visual-newsletter { margin-top: -2rem !important; transform: scale(0.55); transform-origin: top center; margin-bottom: -9rem !important; }
 
   /* Feature 전체 가운데 정렬 */
   .feature-block { align-items: center !important; }
@@ -919,7 +940,11 @@ footer {
   .feat-sub .chips { flex-wrap: nowrap !important; justify-content: center !important; }
   .feat-sub { align-self: center !important; width: 100% !important; text-align: center !important; }
 
+  /* Feature 4 전체를 위로 — Feature 3 border-bottom 제거 후 Feature 4 border-top으로 이동 */
+  #feature3 { border-bottom: none !important; }
+  #feature4 { margin-top: -3rem !important; border-top: 1px solid rgba(30,100,170,0.1) !important; }
   #feature4 > .feat-copy { margin-top: -0.5rem !important; }
+  #feature2 .feat-visual { margin-left: -0.5rem !important; margin-right: -0.5rem !important; width: calc(100% + 1rem) !important; max-width: calc(100% + 1rem) !important; }
 }
 
 @media (max-width: 560px) {
@@ -972,9 +997,8 @@ footer {
 }
 .nav-hamburger span {
   display: block; width: 22px; height: 2px; background: #F4F8FC;
-  border-radius: 2px; transition: transform 0.2s, opacity 0.2s, background-color 0.2s;
+  border-radius: 2px; transition: transform 0.2s, opacity 0.2s;
 }
-nav.nav-light-theme .nav-hamburger span { background: #1F3A5F; }
 .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
@@ -1001,8 +1025,8 @@ nav.nav-light-theme .nav-hamburger span { background: #1F3A5F; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .fade-in { opacity: 1; transform: none; }
-  html { scroll-snap-type: none; }
+  .fade-in, .js .fade-in { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; scroll-snap-type: none; }
 }
 
 /* 데스크탑 전용 */
@@ -1010,9 +1034,9 @@ nav.nav-light-theme .nav-hamburger span { background: #1F3A5F; }
   .features-header { padding-top: 20px !important; }
   .feat-icon-pair { justify-content: flex-start !important; }
   .feat-icon-img { width: 44% !important; }
-  .feat-visual-newsletter { margin-top: 1rem !important; }
-  .feat-visual.feat-visual-newsletter { max-width: 440px !important; width: 100% !important; }
-  .features-grid-2col { min-height: calc(72vh - 160px) !important; }
+  .feat-visual-newsletter { margin-top: 1rem !important; transform: scale(0.85); transform-origin: top center; }
+  .feat-visual.feat-visual-newsletter { max-width: 420px !important; width: 100% !important; }
+  #fcc-slide-2 .feat-visual-ai { transform: scale(0.78); transform-origin: top center; margin-top: 5rem; }
 }
 
 @media (min-width: 801px) and (max-width: 1366px) {
@@ -1020,76 +1044,18 @@ nav.nav-light-theme .nav-hamburger span { background: #1F3A5F; }
   html body #feature4 .feat-sub { margin-top: 1rem !important; }
   .why-section { padding-top: 6rem !important; padding-bottom: 2rem !important; }
   .why-intro { margin-bottom: 2rem !important; }
-
-  /* 노트북 폭 — 피처 2·3·4 표/뉴스레터가 너무 커서 하단 태그가 잘리는 문제 수정 */
-  html body .features-section { justify-content: flex-start !important; padding-bottom: 12px !important; }
-  html body #features { padding-top: 80px !important; }
-  html body .fade-in.features-header { padding-top: 0.25rem !important; margin-bottom: 0.5rem !important; top: 0 !important; }
-  html body #features .s-eyebrow { margin-top: 0.5rem !important; }
-  html body #features .s-title { font-size: 1.7rem !important; }
-  html body .features-grid-2col { top: 0 !important; min-height: 558px !important; }
-  html body .feat-pager-count { bottom: 0.5rem !important; }
-  #feature2, #feature3, #feature4 { padding: 1.25rem 0 !important; gap: 0.6rem !important; }
-  #feature2 .feat-tag, #feature3 .feat-tag, #feature4 .feat-tag { font-size: 14px !important; }
-  #feature2 .feat-title, #feature3 .feat-title, #feature4 .feat-title { font-size: clamp(1.15rem, 1.8vw, 1.4rem) !important; }
-  #feature2 .feat-desc, #feature3 .feat-desc, #feature4 .feat-desc { font-size: 0.85rem !important; margin-top: 0.4rem !important; }
-  #feature2 .feat-visual { transform: scale(0.68); transform-origin: top center; margin-bottom: -108px !important; }
-  html body .feat-visual-ai { transform: scale(0.72); transform-origin: top center; margin-top: 0 !important; margin-bottom: -111px !important; }
-  html body .feat-visual-newsletter { transform: scale(0.62); transform-origin: top center; margin-top: 0 !important; margin-bottom: -147px !important; }
-  #feature2 .feat-sub, #feature4 .feat-sub { margin-top: 0.4rem !important; }
-  #feature3 .feat-note { margin-top: -0.2rem !important; }
-}
-
-/* 데스크탑 캐러셀 — feature-block의 구형 min-height:72vh가 features-grid-2col의
-   calc(72vh - 160px)보다 커서 하단(태그)이 grid의 overflow:hidden에 잘리는 문제 수정 */
-@media (min-width: 1367px) {
-  html body .feature-block { min-height: 0 !important; }
-}
-
-@media (min-width: 1367px) and (max-height: 900px) {
-  html body .why-section { padding-top: 6rem !important; padding-bottom: 2rem !important; }
-  html body .why-intro { margin-bottom: 2rem !important; }
-}
-
-/* 데스크탑인데 화면 높이가 낮은 경우 — 피처 3·4 표/뉴스레터가 커서 하단 태그가 잘리는 문제 보정 */
-@media (min-width: 1367px) and (max-height: 950px) {
-  html body #feature2 .feat-visual { transform: scale(0.94); transform-origin: top center; margin-bottom: -20px !important; }
-  html body .feat-visual-ai { transform: scale(0.78); transform-origin: top center; margin-bottom: -87px !important; }
-  html body .feat-visual-newsletter { transform: scale(0.9); transform-origin: top center; margin-bottom: -4px !important; }
-}
-
-/* 초와이드 데스크탑 — 피처 섹션 전체 크기 확대 (위치·비율은 그대로) */
-@media (min-width: 1920px) {
-  html body .features-grid-2col { max-width: 1560px !important; }
-  html body .feat-copy { max-width: 672px !important; }
-  html body .feat-tag { font-size: 20px !important; }
-  html body .feat-title { font-size: 36px !important; }
-  html body .feat-desc { font-size: 23px !important; }
-  html body .feat-visual { max-width: 528px !important; }
-  html body .feat-visual.feat-visual-newsletter { max-width: 528px !important; }
 }
 
 /* 기관 커뮤니케이션 모바일 위치 조정 — 최하단 최고 특이도 */
 @media (max-width: 800px) {
-  html body .features-header { padding-top: 0 !important; margin-top: 1rem !important; }
+  html body .why-intro { top: 0 !important; }
+  html body .why-grid { top: 0 !important; }
+  html body .features-header { padding-top: 0 !important; margin-top: -1rem !important; }
   html body .feat-icon-arrow { transform: rotate(0deg) !important; }
-  html body #feature3 { padding-bottom: 5rem !important; }
+  html body #feature3 { border-bottom: none !important; padding-bottom: 5rem !important; }
+  html body #feature4 { margin-top: -4rem !important; border-top: 1px solid rgba(30,100,170,0.1) !important; }
+  html body #feature3 .feat-sub { margin-top: -0.75rem !important; }
   html body .features-section { padding-bottom: 3rem !important; }
-  /* 데스크탑용 좌우 오프셋 초기화 — 모바일에서 정가운데 정렬 */
-  html body .feat-copy { margin-left: 0 !important; }
-  html body .features-grid-2col { left: 0 !important; top: -2.5rem !important; }
-  html body .feat-pager-arrow { top: calc(50% + 2.1rem) !important; }
-  html body .chip { font-size: 0.75rem !important; padding: 0.25rem 0.75rem !important; }
-  html body #feature2 .feat-sub { margin-top: 1.65rem !important; }
-  html body #feature1 .feat-sub { margin-top: 4.14rem !important; }
-  html body #feature4 .feat-sub { margin-top: 1.23rem !important; }
-  html body .feat-pager-count { bottom: 7.5rem !important; }
-  .feat1-br-mobile { display: inline; }
-  .feat1-br-desktop { display: none; }
-  .feat2-br-mobile { display: inline; }
-  .feat2-br-desktop { display: none; }
-  html body .feat-index { margin-top: -0.4rem !important; }
-  html body .feat-pager-arrow svg { width: 11px !important; height: 20px !important; }
 }
 
 /* feat-icon-pair 항상 가로 배치 — 창 크기 무관 */
@@ -1102,33 +1068,151 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   html body .feat-icon-img { width: 36% !important; max-width: 150px !important; }
 }
 
-/* ─── 우측 섹션 네비게이터 ─────────────────────────────────── */
-.section-nav {
-  position: fixed; left: auto; right: 5.75rem; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
-  width: auto; padding: 0; margin: 0; background: none; border: none; z-index: 90;
-}
-.section-nav a {
+/* ─── FEATURES CAROUSEL (FCC) ────────────────── */
+.fcc-section {
+  background: #fff;
+  min-height: 100vh; min-height: 100dvh;
   position: relative;
-  width: 10px; height: 10px; border-radius: 50%;
-  background: rgba(114,153,184,0.4);
-  display: block;
-  transition: background 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  padding: 0;
 }
-.section-nav a::before {
-  content: ''; position: absolute; top: 50%; left: 50%;
-  width: 32px; height: 32px; transform: translate(-50%, -50%);
+.fcc-label {
+  position: absolute;
+  top: clamp(9rem, 13vh, 11rem);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1F68B0;
+  z-index: 4;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
 }
-.section-nav a:hover { background: rgba(114,153,184,0.75); }
-.section-nav a.active { background: #4BA3DE; transform: scale(1.4); }
-.section-nav.section-nav-light a { background: rgba(31,104,176,0.3); }
-.section-nav.section-nav-light a:hover { background: rgba(31,104,176,0.55); }
-.section-nav.section-nav-light a.active { background: #1F68B0; }
-.section-nav.section-nav-blue a { background: rgba(255,255,255,0.4); }
-.section-nav.section-nav-blue a:hover { background: rgba(255,255,255,0.7); }
-.section-nav.section-nav-blue a.active { background: #ffffff; }
-@media (max-width: 1000px) {
-  .section-nav { display: none; }
+.fcc-stage {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.fcc-slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(14rem, 22vh, 18rem);
+  will-change: transform, opacity;
+  transition: transform 0.52s cubic-bezier(0.4,0,0.2,1), opacity 0.52s ease, z-index 0s;
+  cursor: default;
+  z-index: 0;
+}
+.fcc-slide.fcc-side { cursor: pointer; }
+.fcc-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1.5rem clamp(2rem, 5vw, 5rem) clamp(2rem, 5vh, 3.5rem);
+  gap: 2rem;
+  flex-shrink: 0;
+}
+.fcc-text {
+  position: absolute;
+  top: clamp(12rem, 18vh, 15rem);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  max-width: 560px;
+  width: calc(100% - 3rem);
+  z-index: 3;
+}
+.fcc-title {
+  font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+  font-weight: 800;
+  color: #0D1F35;
+  line-height: 1.2;
+  margin: 0 0 1.1rem;
+  letter-spacing: -0.01em;
+  transition: opacity 0.28s ease;
+}
+.fcc-desc {
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  color: #5A7A96;
+  line-height: 1.75;
+  margin: 0;
+  transition: opacity 0.28s ease;
+}
+.fcc-m-br { display: none; }
+.fcc-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex-shrink: 0;
+  padding-bottom: 0.15rem;
+}
+.fcc-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #0D1F35;
+  transition: color 0.2s, transform 0.12s;
+}
+.fcc-btn:hover { color: #1F68B0; }
+.fcc-btn:active { transform: scale(0.88); }
+.fcc-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.fcc-dot {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0D1F35;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.fcc-dot:not(.fcc-dot-active):hover { background: rgba(31,104,176,0.08); }
+.fcc-dot.fcc-dot-active { background: #7B8CBF; color: #fff; }
+@media (max-width: 800px) {
+  .fcc-label { top: 7rem; }
+  .fcc-text { top: 9.5rem; max-width: calc(100% - 3rem); }
+  .fcc-slide { padding-top: clamp(11rem, 22vh, 15rem); }
+  .fcc-bottom { padding: 0.5rem 1.5rem 6rem; }
+  .fcc-dot { width: 1.6rem; height: 1.6rem; font-size: 0.75rem; }
+  .fcc-m-br { display: inline; }
+  .fcc-d-br { display: none; }
+  .fcc-slide .chips { transform: translateX(-50%) scale(0.8); transform-origin: center bottom; bottom: 6.5rem; flex-wrap: nowrap; }
+  .fcc-slide .chip { height: 2rem; display: flex; align-items: center; }
+  #fcc-slide-1 .feat-visual { transform: scale(0.6); transform-origin: center center; margin-top: -0.5rem; }
+  #fcc-slide-2 .feat-visual-ai { transform: scale(0.62) !important; transform-origin: center center !important; margin-top: 0 !important; }
+  #fcc-slide-3 .chip { white-space: nowrap !important; }
+  .fcc-side { opacity: 0 !important; pointer-events: none; }
+}
+
+/* 노트북 뷰포트 높이 대응 — FCC 비례 */
+@media (min-width: 801px) and (max-height: 900px) {
+  .fcc-label { top: 16vh; }
+  .fcc-text { top: 21vh; }
+  #fcc-slide-1 .feat-visual { transform: scale(0.8); }
+  #fcc-slide-2 .feat-visual-ai { transform: scale(0.8) !important; transform-origin: center center !important; margin-top: 4rem !important; }
+  .fcc-slide .feat-visual-newsletter { transform: scale(0.72) !important; margin-top: 4rem !important; }
 }
 
 </style>
@@ -1141,29 +1225,30 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
     <img src="logo/ti-logo-typo-white.png" alt="Trial Insight" style="height:42px; width:auto;">
   </a>
   <ul class="nav-links">
-    <li><a href="#why" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});">제품 소개</a></li>
-    <li><a href="#features" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'});">핵심 기능</a></li>
-    <li><a href="#benefits" onclick="event.preventDefault();document.getElementById('benefits').scrollIntoView({behavior:'smooth'});">기대 효과</a></li>
-    <li><a href="#cta" onclick="event.preventDefault();document.getElementById('cta').scrollIntoView({behavior:'smooth'});">FAQ</a></li>
+    <li><a href="#why" onclick="event.preventDefault();window.tiScrollTo('why');">제품 소개</a></li>
+    <li><a href="#features" onclick="event.preventDefault();window.tiScrollTo('features');">핵심 기능</a></li>
+    <li><a href="#benefits" onclick="event.preventDefault();window.tiScrollTo('benefits');">기대 효과</a></li>
+    <li><a href="#faq" onclick="event.preventDefault();window.tiScrollTo('faq');">FAQ</a></li>
   </ul>
   <button class="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('mobile-menu').classList.toggle('open')" aria-label="메뉴">
     <span></span><span></span><span></span>
   </button>
 </nav>
-<nav class="section-nav" aria-label="섹션 이동">
-  <a href="#hero" data-section="hero" aria-label="히어로로 이동" onclick="event.preventDefault();document.getElementById('hero').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#why" data-section="why" aria-label="제품 소개로 이동" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#features" data-section="features" aria-label="핵심 기능으로 이동" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#benefits" data-section="benefits" aria-label="기대 효과로 이동" onclick="event.preventDefault();document.getElementById('benefits').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#faq" data-section="faq" aria-label="FAQ로 이동" onclick="event.preventDefault();document.getElementById('faq').scrollIntoView({behavior:'smooth'});"></a>
-  <a href="#cta" data-section="cta" aria-label="CTA로 이동" onclick="event.preventDefault();document.getElementById('cta').scrollIntoView({behavior:'smooth'});"></a>
-</nav>
 <div id="mobile-menu">
-  <a href="#why" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('why').scrollIntoView({behavior:'smooth'});">제품 소개</a>
-  <a href="#features" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('features').scrollIntoView({behavior:'smooth'});">핵심 기능</a>
-  <a href="#benefits" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('benefits').scrollIntoView({behavior:'smooth'});">기대 효과</a>
-  <a href="#cta" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('cta').scrollIntoView({behavior:'smooth'});">FAQ</a>
+  <a href="#why" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('why');">제품 소개</a>
+  <a href="#features" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('features');">핵심 기능</a>
+  <a href="#benefits" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('benefits');">기대 효과</a>
+  <a href="#faq" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('faq');">FAQ</a>
 </div>
+
+<nav class="section-nav">
+  <a href="#hero" data-section="hero" class="active" aria-label="Hero"></a>
+  <a href="#why" data-section="why" aria-label="제품 소개"></a>
+  <a href="#features" data-section="features" aria-label="핵심 기능"></a>
+  <a href="#benefits" data-section="benefits" aria-label="기대 효과"></a>
+  <a href="#faq" data-section="faq" aria-label="FAQ"></a>
+  <a href="#cta" data-section="cta" aria-label="CTA"></a>
+</nav>
 
 <!-- HERO -->
 <section class="hero" id="hero">
@@ -1228,7 +1313,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   </div>
 
   <!-- 스크롤 유도 화살표 -->
-  <a href="#why" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});" class="hero-arrow" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0rem;text-decoration:none;opacity:0.85;z-index:10;">
+  <a href="#why" onclick="event.preventDefault();window.tiScrollTo('why');" class="hero-arrow" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0rem;text-decoration:none;opacity:0.85;z-index:10;">
     <svg width="78" height="30" viewBox="0 0 52 20" fill="none"><path d="M4 4L26 16L48 4" stroke="#7DC8F0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </section>
@@ -1268,43 +1353,137 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </section>
 
 <!-- FEATURES -->
-<section class="section features-section" id="features" style="padding-top: 80px; margin-top: 0; padding-bottom: 2rem;">
-  <div class="features-scroll-hint" aria-hidden="true">
-    <span>SCROLL</span>
-    <svg width="16" height="9" viewBox="0 0 16 9" fill="none"><path d="M1 1L8 7.5L15 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="feature-pager" aria-label="핵심 기능 이전/다음 이동">
-    <button type="button" class="feat-pager-arrow feat-pager-prev" aria-label="이전 기능">
-      <svg width="30" height="52" viewBox="0 0 20 52" fill="none"><path d="M16 4L4 26L16 48" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <span class="feat-pager-count"><span class="feat-pager-current">01</span> / 04</span>
-    <button type="button" class="feat-pager-arrow feat-pager-next" aria-label="다음 기능">
-      <svg width="30" height="52" viewBox="0 0 20 52" fill="none"><path d="M4 4L16 26L4 48" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-  </div>
-  <div class="fade-in features-header" style="margin-bottom:2rem; text-align:center; display:flex; flex-direction:column; align-items:center; gap:0.25rem; position:relative; top:-4.5rem;">
-    <div class="s-eyebrow" style="margin-top:3.5rem;">KEY FEATURES</div>
-    <h2 class="s-title" style="position:relative; z-index:1; margin:0; margin-top:-1.5rem; color:#1B3A6B;">핵심 기능</h2>
+<section class="fcc-section" id="features">
+  <div class="fcc-label" id="fcc-label">Daily Data Sync</div>
+
+  <div class="fcc-stage">
+    <!-- Slide 0: EDC Sync -->
+    <div class="fcc-slide" id="fcc-slide-0">
+      <div class="feat-visual feat-icon-pair" style="background:none; box-shadow:none; display:flex; align-items:center; justify-content:center; gap:0;">
+        <img src="icons/icon-folder.png" alt="" aria-hidden="true" style="width:clamp(130px,22vw,270px); object-fit:contain; margin-right:-2rem;">
+        <div style="display:flex; align-items:center; flex-shrink:0;">
+          <svg width="44" height="44" viewBox="0 0 40 40" fill="none"><path d="M8 20H32M32 20L22 10M32 20L22 30" stroke="#2173BC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <img src="icons/icon-3dgraph.png" alt="" aria-hidden="true" style="width:clamp(130px,22vw,270px); object-fit:contain; margin-left:-2rem;">
+      </div>
+      <div class="chips" style="justify-content:center;">
+        <span class="chip">EDC 연동</span>
+        <span class="chip">매일 자동 업데이트 · 동기화</span>
+      </div>
+    </div>
+    <!-- Slide 1: Quality Check -->
+    <div class="fcc-slide" id="fcc-slide-1">
+      <div class="feat-visual" style="width:100%; max-width:440px;">
+        <div class="mock-titlebar">
+          <div class="tb-dot r"></div><div class="tb-dot y"></div><div class="tb-dot g"></div>
+          <span class="tb-title" style="font-size:0.8rem;">자동 점검 항목 (예시)</span>
+        </div>
+        <div class="mock-body">
+          <div class="q-list">
+            <div class="q-item"><div class="q-name">방문 일정 준수</div><div class="q-dots"><div class="qd ok"></div><div class="qd ok"></div><div class="qd ok"></div><div class="qd e"></div><div class="qd e"></div></div></div>
+            <div class="q-item"><div class="q-name">필수값 누락</div><div class="q-dots"><div class="qd ok"></div><div class="qd w"></div><div class="qd w"></div><div class="qd e"></div><div class="qd e"></div></div></div>
+            <div class="q-item"><div class="q-name">수치 이상값</div><div class="q-dots"><div class="qd ok"></div><div class="qd w"></div><div class="qd m"></div><div class="qd e"></div><div class="qd e"></div></div></div>
+            <div class="q-item"><div class="q-name">논리적 불일치</div><div class="q-dots"><div class="qd ok"></div><div class="qd m"></div><div class="qd m"></div><div class="qd m"></div><div class="qd e"></div></div></div>
+            <div class="q-item"><div class="q-name">대상자 중복 의심</div><div class="q-dots"><div class="qd x"></div><div class="qd x"></div><div class="qd x"></div><div class="qd x"></div><div class="qd e"></div></div></div>
+          </div>
+          <div class="q-legend">
+            <div class="q-leg-item"><div class="q-leg-dot" style="background:#2A9E60"></div>양호</div>
+            <div class="q-leg-item"><div class="q-leg-dot" style="background:#C49A10"></div>주의</div>
+            <div class="q-leg-item"><div class="q-leg-dot" style="background:#C86010"></div>미흡</div>
+            <div class="q-leg-item"><div class="q-leg-dot" style="background:#CC3333"></div>심각</div>
+          </div>
+        </div>
+      </div>
+      <div class="chips" style="justify-content:center;">
+        <span class="chip">점검 규칙·임계값 의뢰사 맞춤 설정이 가능</span>
+      </div>
+    </div>
+    <!-- Slide 2: AI Assistant -->
+    <div class="fcc-slide" id="fcc-slide-2">
+      <div class="feat-visual feat-visual-ai" style="width:100%; max-width:480px;">
+        <div class="mock-titlebar">
+          <div class="tb-dot r"></div><div class="tb-dot y"></div><div class="tb-dot g"></div>
+          <span class="tb-title" style="font-size:0.8rem;">AI Assistant</span>
+        </div>
+        <div class="mock-body">
+          <div class="chat-wrap">
+            <div class="chat-q-row">
+              <div class="chat-q">이상사례가 발생한 대상자 중<br class="fcc-m-br">60세 이상은 몇 명인가요?</div>
+              <svg class="chat-avatar" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="15" fill="#2173BC"/><circle cx="10.5" cy="13" r="1.5" fill="white"/><circle cx="19.5" cy="13" r="1.5" fill="white"/><path d="M10 18.5 Q15 22.5 20 18.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+            </div>
+            <div class="chat-a">
+              <div style="font-size:0.68rem; color:#888; text-align:center; margin-bottom:0.25rem;">※ 데모 화면 예시이며, 실제 연구 데이터가 아닙니다.</div>
+              <div class="chat-a-head" style="text-align:center;">이상사례 발생 대상자 중 60세 이상 · 총 83명</div>
+              <table class="ct"><thead><tr><th>구분</th><th>인원</th></tr></thead><tbody><tr><td>이상사례 발생 대상자 전체</td><td>162명</td></tr><tr><td>이 중 60세 이상</td><td class="hi">83명</td></tr><tr><td>비율</td><td class="hi">약 51%</td></tr></tbody></table>
+              <div class="chat-note" style="text-align:center; margin:0.75rem auto 0;">발생 대상자의 절반 이상이 60세 이상 고령층에 해당합니다.<br>기관·성별로 좁혀서 보시겠다면 추가로 안내드립니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="feat-note" style="text-align:center; margin-top:0.75rem;"><strong>임상 판단·인과성 평가에는 별도 검토가 필요합니다.</strong></p>
+    </div>
+    <!-- Slide 3: Auto Reports -->
+    <div class="fcc-slide" id="fcc-slide-3">
+      <div class="feat-visual feat-visual-newsletter" style="background:none; border-radius:0; box-shadow:none; overflow:visible; padding:1rem 0; position:relative;">
+        <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 16px 60px rgba(10,40,100,0.07);width:380px;max-width:90vw;margin:0 auto;">
+          <div style="background:#6B8FBF;padding:0.7rem 1.25rem;text-align:center;"><span style="color:#fff;font-size:0.85rem;font-weight:800;letter-spacing:0.18em;">NEWSLETTER</span></div>
+          <div style="padding:1.75rem 1.5rem 2rem;">
+            <div style="display:flex;gap:1rem;margin-bottom:1.75rem;align-items:center;">
+              <div style="flex-shrink:0;background:#D4E4EF;border-radius:8px;width:100px;height:100px;display:flex;align-items:center;justify-content:center;">
+                <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="20" fill="none" stroke="#2D4A6B" stroke-width="14" stroke-dasharray="43.98 81.64" stroke-dashoffset="0" transform="rotate(-90 36 36)"/><circle cx="36" cy="36" r="20" fill="none" stroke="#C9B84C" stroke-width="14" stroke-dasharray="31.42 94.20" stroke-dashoffset="-43.98" transform="rotate(-90 36 36)"/><circle cx="36" cy="36" r="20" fill="none" stroke="#C05A5A" stroke-width="14" stroke-dasharray="25.13 100.49" stroke-dashoffset="-75.40" transform="rotate(-90 36 36)"/><circle cx="36" cy="36" r="20" fill="none" stroke="#85B4CC" stroke-width="14" stroke-dasharray="25.13 100.49" stroke-dashoffset="-100.53" transform="rotate(-90 36 36)"/></svg>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:0.6rem;"><div style="height:3px;background:#85B4CC;border-radius:2px;width:95%;"></div><div style="height:3px;background:#85B4CC;border-radius:2px;width:75%;"></div><div style="height:3px;background:#85B4CC;border-radius:2px;width:88%;"></div><div style="height:3px;background:#85B4CC;border-radius:2px;width:65%;"></div><div style="height:3px;background:#85B4CC;border-radius:2px;width:80%;"></div><div style="height:3px;background:#85B4CC;border-radius:2px;width:70%;"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.5rem;"><div style="height:3px;background:#B3CCDD;border-radius:2px;width:100%;"></div><div style="height:3px;background:#B3CCDD;border-radius:2px;width:90%;"></div><div style="height:3px;background:#B3CCDD;border-radius:2px;width:96%;"></div><div style="height:3px;background:#B3CCDD;border-radius:2px;width:82%;"></div><div style="height:3px;background:#B3CCDD;border-radius:2px;width:88%;"></div></div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;"><div style="height:3px;background:#C8D9E7;border-radius:2px;width:100%;"></div><div style="height:3px;background:#C8D9E7;border-radius:2px;width:85%;"></div><div style="height:3px;background:#C8D9E7;border-radius:2px;width:92%;"></div><div style="height:3px;background:#C8D9E7;border-radius:2px;width:78%;"></div></div>
+          </div>
+        </div>
+        <svg style="position:absolute;bottom:30px;right:calc(50% - 165px);z-index:10;filter:drop-shadow(1px 2px 4px rgba(0,60,140,0.3));" width="52" height="62" viewBox="0 0 36 44" fill="none"><path d="M4 2L4 34L12 26L17 38L21 36.5L16 24L26 24L4 2Z" fill="#2173BC"/></svg>
+      </div>
+      <div class="chips" style="justify-content:center; flex-wrap:nowrap;">
+        <span class="chip" style="white-space:nowrap;">월별 자동 발송</span>
+        <span class="chip" style="white-space:nowrap;">생성·발송 주기 커스터마이징 가능</span>
+      </div>
+    </div>
   </div>
 
-  <div class="features-grid-2col" style="position:relative; top:-2.5rem; left:2rem;">
+  <div class="fcc-bottom">
+    <div class="fcc-text">
+      <h2 class="fcc-title" id="fcc-title">EDC 자동 동기화·시각화</h2>
+      <p class="fcc-desc" id="fcc-desc">매일 정해진 시점에 동기화하여 데이터를<br>검토·모니터링합니다. 등록 현황·유효성·안전성<br>현황을 매일 시각화합니다.</p>
+    </div>
+    <div class="fcc-nav">
+      <button class="fcc-btn" id="fcc-prev" aria-label="이전 기능">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1L1 7.5L7.5 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="fcc-dots" id="fcc-dots">
+        <button class="fcc-dot fcc-dot-active" data-idx="0">1</button>
+        <button class="fcc-dot" data-idx="1">2</button>
+        <button class="fcc-dot" data-idx="2">3</button>
+        <button class="fcc-dot" data-idx="3">4</button>
+      </div>
+      <button class="fcc-btn" id="fcc-next" aria-label="다음 기능">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="features-grid-2col" style="display:none !important; position:absolute; visibility:hidden; pointer-events:none;">
   <!-- Feature 1 -->
   <div id="feature1" class="feature-block fade-in">
     <div class="feat-copy">
-      <div class="feat-index">핵심 기능 01</div>
       <div class="feat-tag">Daily Data Sync</div>
       <h3 class="feat-title" style="white-space:nowrap;">EDC 자동 동기화·시각화</h3>
-      <p class="feat-desc">매일 정해진 시점에 동기화하여 데이터를<br>검토·모니터링합니다. 등록 현황·유효성·안전성<br class="feat1-br-mobile"> 현황을<br class="feat1-br-desktop"> 매일 시각화합니다.</p>
+      <p class="feat-desc">매일 정해진 시점에 동기화하여 데이터를<br>검토·모니터링합니다. 등록 현황·유효성·안전성 현황을<br>매일 시각화합니다.</p>
     </div>
     <div class="feat-right">
-    <div class="feat-visual feat-icon-pair" style="background:none; box-shadow:none; display:flex; align-items:center; justify-content:center; gap:0; margin-top:-1rem; width:100%; margin-left:auto; margin-right:auto;">
-      <img class="feat-icon-img" src="icons/icon-folder.png" alt="" aria-hidden="true" style="width:42%; max-width:220px; display:block; object-fit:contain; margin-right:-1.5rem;">
+    <div class="feat-visual feat-icon-pair" style="background:none; box-shadow:none; display:flex; align-items:center; justify-content:center; gap:0; margin-top:-1rem;">
+      <img class="feat-icon-img" src="icons/icon-folder.png" alt="" aria-hidden="true" style="width:55%; max-width:1800px; display:block; object-fit:contain; margin-right:-1.5rem;">
       <div class="feat-icon-arrow" style="display:flex; align-items:center; flex-shrink:0;">
         <svg width="44" height="44" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 20H32M32 20L22 10M32 20L22 30" stroke="#2173BC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <img class="feat-icon-img" src="icons/icon-3dgraph.png" alt="" aria-hidden="true" style="width:42%; max-width:220px; display:block; object-fit:contain; margin-left:-1.5rem;">
+      <img class="feat-icon-img" src="icons/icon-3dgraph.png" alt="" aria-hidden="true" style="width:55%; max-width:1800px; display:block; object-fit:contain; margin-left:-1.5rem;">
     </div>
     <div class="feat-sub" style="display:flex; flex-direction:column; align-items:center; margin-top:0.75rem;">
       <div class="chips" style="justify-content:center;">
@@ -1318,10 +1497,9 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   <!-- Feature 2 -->
   <div id="feature2" class="feature-block fade-in">
     <div class="feat-copy">
-      <div class="feat-index">핵심 기능 02</div>
       <div class="feat-tag">Central Monitoring</div>
       <h3 class="feat-title" style="white-space:nowrap;">데이터 품질·정합성 자동 점검</h3>
-      <p class="feat-desc">데이터 오류와 이상 패턴을 매일 자동 점검하고,<br>기관별로 점수화하여 자료 정합성과<br class="feat2-br-mobile"> 기관 관리<br class="feat2-br-desktop"> 상태를 한눈에 파악합니다.</p>
+      <p class="feat-desc">데이터 오류와 이상 패턴을 매일 자동 점검하고,<br>기관별로 점수화하여 자료 정합성과 기관 관리<br>상태를 한눈에 파악합니다.</p>
     </div>
     <div class="feat-right">
     <div class="feat-visual" style="width:100%; max-width:440px; margin-left:auto; margin-right:auto; margin-top:1rem;">
@@ -1356,13 +1534,12 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   <!-- Feature 3 -->
   <div id="feature3" class="feature-block fade-in">
     <div class="feat-copy">
-      <div class="feat-index">핵심 기능 03</div>
       <div class="feat-tag">Ask Your Data</div>
       <h3 class="feat-title">AI 연구 어시스턴트</h3>
       <p class="feat-desc">자연어로 질문하면 차트·요약으로 즉답합니다.<br><span style="white-space:nowrap">데이터 조회·해석 및 인사이트 도출에 도움을 줍니다.</span></p>
     </div>
     <div class="feat-right">
-    <div class="feat-visual feat-visual-ai" style="width:100%; max-width:440px; margin-left:auto; margin-right:auto; margin-top:1rem;">
+    <div class="feat-visual feat-visual-ai" style="width:100%; max-width:480px; margin-left:auto; margin-right:auto; margin-top:1rem;">
       <div class="mock-titlebar">
         <div class="tb-dot r"></div><div class="tb-dot y"></div><div class="tb-dot g"></div>
         <span class="tb-title" style="font-size:0.8rem;">AI Assistant</span>
@@ -1403,15 +1580,14 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   <!-- Feature 4 -->
   <div id="feature4" class="feature-block fade-in">
     <div class="feat-copy" style="margin-top:1rem;">
-      <div class="feat-index">핵심 기능 04</div>
       <div class="feat-tag" style="margin-top:0.1rem;">Auto Reports</div>
       <h3 class="feat-title">기관 커뮤니케이션</h3>
       <p class="feat-desc">기관별 정기 보고서·뉴스레터를 자동 생성·발송하여,<br>등록 독려에 활용하고 의뢰사 로고로 브랜딩합니다.</p>
     </div>
     <div class="feat-right">
-    <div class="feat-visual feat-visual-newsletter" style="background:none; border-radius:0; box-shadow:none; overflow:visible; padding:1rem 0; position:relative; margin-top:1rem; margin-bottom:2rem; margin-left:auto; margin-right:auto;">
+    <div class="feat-visual feat-visual-newsletter" style="background:none; border-radius:0; box-shadow:none; overflow:visible; padding:1rem 0; position:relative; margin-top:1rem; margin-bottom:1rem; margin-left:auto; margin-right:auto;">
       <!-- 뉴스레터 문서 -->
-      <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 16px 60px rgba(10,40,100,0.07);width:340px;max-width:100%;margin:0 auto;">
+      <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 16px 60px rgba(10,40,100,0.07);width:380px;max-width:100%;margin:0 auto;">
         <!-- 헤더 -->
         <div style="background:#6B8FBF;padding:0.7rem 1.25rem;text-align:center;">
           <span style="color:#fff;font-size:0.85rem;font-weight:800;letter-spacing:0.18em;">NEWSLETTER</span>
@@ -1473,7 +1649,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </section>
 
 <!-- BENEFITS -->
-<section class="section benefits-section" id="benefits" style="margin-top: 0; padding-top: calc(2rem + 80px); padding-bottom: 2rem; box-sizing: border-box;">
+<section class="section benefits-section" id="benefits" style="padding-top: calc(2rem + 80px); padding-bottom: 2rem; box-sizing: border-box;">
   <div class="benefits-intro fade-in" style="position:relative; text-align:center; background: radial-gradient(ellipse 90% 140% at 50% 50%, rgba(255,255,255,0.82) 30%, rgba(255,255,255,0) 100%);">
     <img src="icons/icon-memo.png" class="benefits-bg-img" alt="" aria-hidden="true" style="position:absolute; width:650px; top:65%; left:50%; transform:translate(-50%,-50%); opacity:0.3; pointer-events:none; z-index:0; -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 80%); mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 80%);">
     <h2 class="s-title" style="color:#1B3A6B; position:relative; z-index:2; margin-top:-1rem;">사후보고에서<br>실시간 의사결정으로</h2>
@@ -1513,7 +1689,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 
 <!-- CTA + FOOTER WRAPPER -->
 <!-- FAQ -->
-<section id="faq" style="background:linear-gradient(160deg,#EBF4FF 0%,#F6FAFF 55%,#FAFCFF 100%); padding:5rem 1.5rem; padding-top:calc(5rem + 80px); position:relative; overflow:hidden; scroll-snap-align:start; min-height:100vh; display:flex; flex-direction:column; justify-content:center; box-sizing:border-box;">
+<section id="faq" style="background:linear-gradient(160deg,#EBF4FF 0%,#F6FAFF 55%,#FAFCFF 100%); padding:5rem 1.5rem; padding-top:calc(5rem + 80px); position:relative; overflow:hidden; scroll-snap-align:start; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; justify-content:center; box-sizing:border-box;">
   <img src="icons/icon-search-3d.png" alt="" aria-hidden="true" style="position:absolute; width:300px; height:auto; left:50%; top:8rem; transform:translateX(calc(-50% + 0.7rem)) translateY(0rem); opacity:0.5; pointer-events:none; z-index:0; -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%); mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);">
 
   <div style="width:100%; max-width:800px; margin:0 auto; position:relative; z-index:1; box-sizing:border-box;">
@@ -1567,10 +1743,10 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   </div>
 </section>
 
-<div class="cta-footer-wrap" style="min-height:100vh; display:flex; flex-direction:column; scroll-snap-align:start;">
+<div class="cta-footer-wrap" style="min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; scroll-snap-align:start;">
 
 <!-- CTA -->
-<section class="cta-section" id="cta" style="flex:1; min-height:0; position:relative; overflow:hidden; padding-top:80px; box-sizing:border-box;">
+<section class="cta-section" id="cta" style="flex:1; position:relative; overflow:hidden; min-height:0; padding-top:80px; box-sizing:border-box;">
   <img src="icons/icon-logo-memo.png" alt="" aria-hidden="true" style="position:absolute; width:500px; height:auto; opacity:0.45; pointer-events:none; bottom:16px; left:50%; transform:translateX(calc(-50% + 1.5rem)) rotate(-12deg); z-index:0; -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%); mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 70%);">
 
 
@@ -1609,7 +1785,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </div><!-- /CTA + FOOTER WRAPPER -->
 
 <!-- BACK TO TOP -->
-<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="맨 위로">
+<button id="backToTop" onclick="window.tiScrollTop()" title="맨 위로">
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path d="M4 13L10 7L16 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
@@ -1634,6 +1810,13 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </style>
 
 <script>
+window.tiScrollTo = function(target) {
+  var section = typeof target === 'string' ? document.getElementById(target) : target;
+  if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+window.tiScrollTop = function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 window.addEventListener('scroll', function() {
   document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
 });
@@ -1644,13 +1827,16 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('hero-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let W, H, nodes;
 
   function init() {
     W = canvas.offsetWidth;
     H = canvas.offsetHeight;
-    canvas.width = W;
-    canvas.height = H;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     nodes = [];
     const count = Math.max(22, Math.min(Math.floor(W * H / 14000), 50));
     for (let i = 0; i < count; i++) {
@@ -1699,7 +1885,7 @@ window.addEventListener('scroll', function() {
       ctx.fill();
     });
 
-    requestAnimationFrame(draw);
+    if (!reducedMotion.matches) requestAnimationFrame(draw);
   }
 
   let resizeTimer;
@@ -1715,10 +1901,16 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('geo-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let W = 0, H = 0;
 
   function resize() {
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   const phi = (1 + Math.sqrt(5)) / 2;
@@ -1751,7 +1943,6 @@ window.addEventListener('scroll', function() {
   }
 
   function draw() {
-    var W = canvas.width, H = canvas.height;
     var t = Date.now() * 0.00025;
     ctx.clearRect(0, 0, W, H);
 
@@ -1790,7 +1981,7 @@ window.addEventListener('scroll', function() {
       ctx.fill();
     });
 
-    requestAnimationFrame(draw);
+    if (!reducedMotion.matches) requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', function() { resize(); });
@@ -1802,7 +1993,6 @@ window.addEventListener('scroll', function() {
 <script>
 (function() {
   var els = Array.prototype.slice.call(document.querySelectorAll('.fade-in'));
-
   if (!('IntersectionObserver' in window)) {
     els.forEach(function(el) { el.classList.add('vis'); });
     return;
@@ -1861,7 +2051,7 @@ window.addEventListener('scroll', function() {
   });
 })();
 
-/* ── Feature 가로 캐러셀 (전체 폭 공통) ── */
+/* ── Feature 가로 캐러셀 (전체 탭 공통) ── */
 (function() {
   const featuresSection = document.getElementById('features');
   const blocks = ['feature1', 'feature2', 'feature3', 'feature4']
@@ -1891,11 +2081,9 @@ window.addEventListener('scroll', function() {
   function goTo(index) {
     const nextIndex = Math.max(0, Math.min(blocks.length - 1, index));
     if (nextIndex === currentIndex) return;
-
     currentIndex = nextIndex;
     render();
     updatePager();
-
   }
 
   if (pagerPrev) pagerPrev.addEventListener('click', function() { goTo(currentIndex - 1); });
@@ -1919,65 +2107,9 @@ window.addEventListener('scroll', function() {
     sectionObs.observe(featuresSection);
   }
 
-  function isFeatureInView() {
-    const centerElement = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
-    if (centerElement && featuresSection.contains(centerElement)) return true;
-
-    const rect = featuresSection.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    return rect.top < viewportHeight * 0.85 && rect.bottom > viewportHeight * 0.15;
-  }
-
-  let wheelGestureActive = false;
-  let wheelDirection = 0;
-  let wheelGestureTimer;
-  const wheelIdleMs = 140;
-
-  function getWheelDelta(event) {
-    if (typeof event.deltaY === 'number' && event.deltaY !== 0) {
-      if (event.deltaMode === 1) return event.deltaY * 16;
-      if (event.deltaMode === 2) return event.deltaY * window.innerHeight;
-      return event.deltaY;
-    }
-    if (typeof event.wheelDelta === 'number') return -event.wheelDelta;
-    return event.detail || 0;
-  }
-
-  function resetWheelGesture() {
-    clearTimeout(wheelGestureTimer);
-    wheelGestureTimer = setTimeout(function() {
-      wheelGestureActive = false;
-      wheelDirection = 0;
-    }, wheelIdleMs);
-  }
-
-  window.addEventListener('wheel', function(event) {
-    if (!isFeatureInView()) {
-      clearTimeout(wheelGestureTimer);
-      wheelGestureActive = false;
-      wheelDirection = 0;
-      return;
-    }
-
-    const delta = getWheelDelta(event);
-    if (!delta) return;
-
-    const direction = Math.sign(delta);
-    const canMove = direction > 0 ? currentIndex < blocks.length - 1 : currentIndex > 0;
-
-    if (wheelGestureActive && wheelDirection === direction) {
-      event.preventDefault();
-      resetWheelGesture();
-      return;
-    }
-
-    if (!canMove) return;
-    event.preventDefault();
-    wheelGestureActive = true;
-    wheelDirection = direction;
-    resetWheelGesture();
-    goTo(currentIndex + direction);
-  }, { passive: false });
+  // 휠 이벤트는 브라우저의 기본 세로 스크롤에 맡긴다.
+  // Windows의 고해상도 휠은 연속 이벤트를 내보내므로, 여기서 preventDefault()를
+  // 호출하면 숨겨진 캐러셀에서 페이지가 멈춘 것처럼 보일 수 있다.
 })();
 
 /* ── 3D Gear Icon ── */
@@ -1985,6 +2117,7 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('gear-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const dpr = window.devicePixelRatio || 1;
   const W = 104, H = 104;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -2082,12 +2215,13 @@ window.addEventListener('scroll', function() {
     draw();
     idleAnimId = requestAnimationFrame(idleLoop);
   }
-  idleAnimId = requestAnimationFrame(idleLoop);
+  if (!reducedMotion.matches) idleAnimId = requestAnimationFrame(idleLoop);
 
   const card = document.getElementById('gear-card');
   if (!card) return;
 
   card.addEventListener('mouseenter', function() {
+    if (reducedMotion.matches) return;
     cancelAnimationFrame(idleAnimId); idleAnimId = null;
     if (animId) return;
     bobFrame = 0;
@@ -2110,6 +2244,7 @@ window.addEventListener('scroll', function() {
   });
 
   card.addEventListener('mouseleave', function() {
+    if (reducedMotion.matches) return;
     cancelAnimationFrame(animId); animId = null;
     cursorBob = 0;
     if (!idleAnimId) idleAnimId = requestAnimationFrame(idleLoop);
@@ -2120,6 +2255,7 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('bolt-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const dpr = window.devicePixelRatio || 1;
   const W = 104, H = 104;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -2187,6 +2323,7 @@ window.addEventListener('scroll', function() {
   if (!card) return;
 
   card.addEventListener('mouseenter', function() {
+    if (reducedMotion.matches) return;
     if (animId) return;
     bobFrame = 0;
     function loop() {
@@ -2207,55 +2344,66 @@ window.addEventListener('scroll', function() {
   });
 
   card.addEventListener('mouseleave', function() {
+    if (reducedMotion.matches) return;
     cancelAnimationFrame(animId);
     animId = null;
     bobY = 0;
     draw(false);
   });
 })();
+</script>
 
-/* ── 상단 nav 고정 스크롤 시 블러 + 라이트 섹션에서 로고 스위칭 ── */
+<script>
+/* ─── section-nav click scroll ─── */
 (function() {
-  const navEl = document.querySelector('nav');
-  const logoImg = document.querySelector('.nav-brand img');
-  const heroEl = document.getElementById('hero');
+  var links = document.querySelectorAll('.section-nav a[data-section]');
+  links.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.getElementById(a.getAttribute('data-section'));
+      if (target) window.tiScrollTo(target);
+    });
+  });
+})();
+
+/* ─── nav scroll / theme switch + section-nav active ─── */
+(function() {
+  var navEl = document.querySelector('nav:not(.section-nav)');
+  var logoImg = document.querySelector('.nav-brand img');
+  var heroEl = document.getElementById('hero');
   if (!navEl || !logoImg || !heroEl) return;
 
-  const LOGO_WHITE = 'logo/ti-logo-typo-white.png';
-  const LOGO_NAVY = 'logo/ti-logo-typo.png';
+  var LOGO_WHITE = 'logo/ti-logo-typo-white.png';
+  var LOGO_NAVY  = 'logo/ti-logo-typo.png';
 
-  const sections = ['hero', 'why', 'features', 'benefits', 'faq', 'cta']
-    .map(function(id) { return document.getElementById(id); })
-    .filter(Boolean);
-  const themeOf = {
-    hero: 'dark', why: 'light', features: 'light',
-    benefits: 'light', faq: 'light', cta: 'dark'
-  };
-  const footerEl = document.querySelector('footer');
-  if (footerEl) { sections.push(footerEl); themeOf[footerEl.id || '__footer__'] = 'dark'; }
+  var sectionIds = ['hero', 'why', 'features', 'benefits', 'faq', 'cta'];
+  var themeOf = { hero: 'dark', why: 'light', features: 'light', benefits: 'light', faq: 'light', cta: 'dark' };
+  var sections = sectionIds.map(function(id) { return document.getElementById(id); }).filter(Boolean);
+  var footerEl = document.querySelector('footer');
+  if (footerEl) { sections.push(footerEl); }
 
-  let isLight = false;
-  let ticking = false;
+  var isLight = false;
+  var ticking = false;
 
-  const sectionNav = document.querySelector('.section-nav');
-  const sectionNavLinks = sectionNav ? Array.prototype.slice.call(sectionNav.querySelectorAll('a')) : [];
-  let activeSectionId = null;
+  var sectionNav = document.querySelector('.section-nav');
+  var sectionNavLinks = sectionNav ? Array.prototype.slice.call(sectionNav.querySelectorAll('a')) : [];
+  var activeSectionId = null;
 
   function update() {
     ticking = false;
-    const scrolled = window.scrollY > (heroEl.offsetHeight - navEl.offsetHeight);
+    var scrolled = window.scrollY > (heroEl.offsetHeight - navEl.offsetHeight);
     navEl.classList.toggle('nav-scrolled', scrolled);
 
-    const probeY = navEl.offsetHeight / 2;
-    let currentTheme = 'dark';
-    for (let i = 0; i < sections.length; i++) {
-      const r = sections[i].getBoundingClientRect();
+    var probeY = navEl.offsetHeight / 2;
+    var currentTheme = 'dark';
+    for (var i = 0; i < sections.length; i++) {
+      var r = sections[i].getBoundingClientRect();
       if (r.top <= probeY && r.bottom > probeY) {
-        currentTheme = themeOf[sections[i].id] || (sections[i] === footerEl ? 'dark' : 'dark');
+        currentTheme = themeOf[sections[i].id] || 'dark';
         break;
       }
     }
-    const wantLight = currentTheme === 'light';
+    var wantLight = currentTheme === 'light';
     if (wantLight !== isLight) {
       isLight = wantLight;
       logoImg.src = isLight ? LOGO_NAVY : LOGO_WHITE;
@@ -2263,14 +2411,14 @@ window.addEventListener('scroll', function() {
     }
 
     if (sectionNav) {
-      const midY = window.innerHeight / 2;
-      let midTheme = 'dark';
-      let midId = null;
-      for (let i = 0; i < sections.length; i++) {
-        const r = sections[i].getBoundingClientRect();
-        if (r.top <= midY && r.bottom > midY) {
-          midId = (sections[i] === footerEl) ? 'cta' : sections[i].id;
-          midTheme = themeOf[sections[i].id] || 'dark';
+      var midY = window.innerHeight / 2;
+      var midTheme = 'dark';
+      var midId = null;
+      for (var j = 0; j < sections.length; j++) {
+        var sr = sections[j].getBoundingClientRect();
+        if (sr.top <= midY && sr.bottom > midY) {
+          midId = sections[j] === footerEl ? 'cta' : sections[j].id;
+          midTheme = themeOf[sections[j].id] || 'dark';
           break;
         }
       }
@@ -2286,10 +2434,7 @@ window.addEventListener('scroll', function() {
   }
 
   window.addEventListener('scroll', function() {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(update);
-    }
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
   }, { passive: true });
   window.addEventListener('resize', update);
   update();
